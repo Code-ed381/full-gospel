@@ -1,79 +1,53 @@
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  RouterProvider,
-} from "react-router-dom";
-
+import {createBrowserRouter} from "react-router-dom";
 import Index from "./components/Index";
 import Events from "./components/Events";
+import Login from "./components/AuthPages/SignInSide";
+import SignUp from "./components/AuthPages/SignUp";
 import Dashboard from "./components/Dashboard";
+import Users from "./components/Users";
+import Sponsors from "./components/Sponsors";
+import Chapters from "./components/Chapters";
 
 const App = createBrowserRouter([
   {
     path: '/',
-    element: <Index/>,
     children: [
       {
-        path:'/events',
-        element: <Events/>
+        path:'login',
+        element: <Login/>
       },
       {
-        path:'/dashboard',
-        element: <Dashboard/>
+        path:'register',
+        element: <SignUp/>
+      },
+      {
+        path:'admin',
+        element: <Index/>,
+        children: [
+          {
+            path:'dashboard',
+            element: <Dashboard/>
+          },
+          {
+            path:'events',
+            element: <Events/>
+          },
+          {
+            path:'users',
+            element: <Users/>
+          },
+          {
+            path:'sponsors',
+            element: <Sponsors/>
+          },
+          {
+            path:'chapters',
+            element: <Chapters/>
+          }
+        ]
       }
     ]
   }
-  //   children: [
-  //     { 
-  //       element: <RequireAuth allowedRoles={[2001]}/>,
-  //       children:[
-  //         { 
-  //           path: '/dashboard',
-  //           element: <Dashboard/>
-  //         }
-  //       ]
-  //     },
-  //     { 
-  //       element: <RequireAuth allowedRoles={[1984]}/>,
-  //       children:[
-  //         { 
-  //           path: 'profile',
-  //           element: <Profile/>,
-  //         },
-  //         {
-  //           path: 'students',
-  //           element: <Students/>, 
-  //         }
-  //       ]
-  //     },
-  //     { 
-  //       element: <RequireAuth allowedRoles={[5150]}/>,
-  //       children:[
-  //         {
-  //           path: 'admin',
-  //           element: <Admin/>, 
-  //         }
-  //       ]
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: 'login',
-  //   element: <Login/>
-  // },
-  // {
-  //   path: 'signup',
-  //   element: <SignUp/>
-  // },
-  // {
-  //   path: 'recover-password',
-  //   element: <Recover/>
-  // },
-  // {
-  //   path: 'unauthorized',
-  //   element: <Unauthorized/>
-  // }
 ])
 
 export default App;
