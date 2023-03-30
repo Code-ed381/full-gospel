@@ -1,4 +1,4 @@
-import {createBrowserRouter} from "react-router-dom";
+import {createHashRouter} from "react-router-dom";
 import Index from "./components/Index";
 import Events from "./components/Events";
 import Login from "./components/AuthPages/SignInSide";
@@ -7,11 +7,16 @@ import Dashboard from "./components/Dashboard";
 import Users from "./components/Users";
 import Sponsors from "./components/Sponsors";
 import Chapters from "./components/Chapters";
+import Landing from "./components/Landing";
 
-const App = createBrowserRouter([
+const App = createHashRouter([
   {
     path: '/',
     children: [
+      {
+        path:'',
+        element: <Landing/>
+      },
       {
         path:'login',
         element: <Login/>
@@ -25,6 +30,7 @@ const App = createBrowserRouter([
         element: <Index/>,
         children: [
           {
+            index: true,
             path:'dashboard',
             element: <Dashboard/>
           },

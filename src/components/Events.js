@@ -18,6 +18,7 @@ import Divider from '@mui/material/Divider';
 import SearchIcon from '@mui/icons-material/Search';
 import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
 const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmZnZqdXR3eGtzenV2bnNxYXljIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjIwMTMxMDUsImV4cCI6MTk3NzU4OTEwNX0.JryH2jtpXFt-dwHAEdMVH0ykYB3cRfHXS0DKiGM1Z8c'
@@ -38,7 +39,21 @@ const ExpandMore = styled((props) => {
 
 const Events = ()=> {
     const [expanded, setExpanded] = React.useState(false);
-    const [data, setData] = useState([])
+    const [data, setData] = useState([]);
+    const [name, setName] = useState('');
+    const [host, setHost] = useState('');
+    const [speaker, setSpeaker] = useState('');
+    const [chapter, setChapter] = useState('');
+    const [comment, setComment] = useState('');
+    const [bio, setBio] = useState('');
+    const [category, setCategory] = useState('');
+    const [date, setDate] = useState(new Date())
+    const [facebook, setFacebook] = useState('');
+    const [youtube, setYouTube] = useState('');
+    const [phone, setPhone] = useState();
+    const [socials, setSocials] = useState('');
+
+    const navigate = useNavigate();
 
     let isMounted = false
     
@@ -66,43 +81,45 @@ const Events = ()=> {
         }
     }, [])
 
-    const handleSubmitEvent = (e) => {
+    const handleSubmitEvent = async (e) => {
       e.preventDefault();
 
       try {
-        swal()
-          .then(name => {
-            if (!name) throw null;
-           
-            return fetch(`https://itunes.apple.com/search?term=${name}&entity=movie`);
-          })
-          .then(results => {
-            return results.json();
-          })
-          .then(json => {
-            const movie = json.results[0];
-           
-            if (!movie) {
-              return swal("No movie was found!");
-            }
-           
-            const name = movie.trackName;
-            const imageURL = movie.artworkUrl100;
-           
-            swal({
-              title: "Top result:",
-              text: name,
-              icon: imageURL,
+        const { data, error } = await supabase
+        .from('events')
+        .insert([
+            { 
+                category_id: category,
+                name: name, 
+                description: comment,
+                phone_number: phone,
+                date: date,
+                facebook: facebook,
+                youtube: youtube,
+                other_socials: socials,
+                chapter: chapter,
+                speaker: speaker,
+                host: host,
+                speaker_bio: bio,
+
+            },
+        ])
+        if(data === null) {
+            swal("Success!", "Event has been added", "success", {
+                button: "Done",
+                timer: 3000,
             });
-          })
-          .catch(err => {
-            if (err) {
-              swal("Oh noes!", "The AJAX request failed!", "error");
-            } else {
-              swal.stopLoading();
-              swal.close();
-            }
-        });
+            setTimeout(() => {
+                navigate(0)
+            }, 3000);
+        }
+        else {
+            swal("Failed!", "Event could not be added", "error", {
+                button: "Ok!",
+                timer: 3000,
+            });
+        }
+        console.log(data || error)
       } catch (error) {
         console.error(error)
       }
@@ -188,6 +205,7 @@ const Events = ()=> {
                                     <CardActions>
                                         <Button size="small">Share</Button>
                                         <Button size="small">View Details</Button>
+                                        <Button size="small">Delete</Button>
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -218,6 +236,7 @@ const Events = ()=> {
                                         class="form-control" 
                                         id="floatingInput" 
                                         placeholder="name@example.com" 
+                                        onChange={(e)=> setName(e.target.value)}
                                     />
                                     <label for="floatingInput">Event name</label>
                                 </div>
@@ -228,6 +247,7 @@ const Events = ()=> {
                                         type="email" 
                                         class="form-control" 
                                         id="floatingInput" 
+                                        onChange={(e)=> setChapter(e.target.value)}
                                         placeholder="name@example.com" 
                                     />
                                     <label for="floatingInput">Chapter</label>
@@ -241,6 +261,7 @@ const Events = ()=> {
                                         type="text" 
                                         class="form-control" 
                                         id="floatingInput" 
+                                        onChange={(e)=> setHost(e.target.value)}
                                         placeholder="name@example.com" 
                                     />
                                     <label for="floatingInput">Host</label>
@@ -252,6 +273,7 @@ const Events = ()=> {
                                         type="email" 
                                         class="form-control" 
                                         id="floatingInput" 
+                                        onChange={(e)=> setSpeaker(e.target.value)}
                                         placeholder="name@example.com" 
                                     />
                                     <label for="floatingInput">Speaker</label>
@@ -265,6 +287,7 @@ const Events = ()=> {
                                         class="form-control" 
                                         placeholder="Leave a comment here" 
                                         id="floatingTextarea"
+                                        onChange={(e)=> setComment(e.target.value)}
                                     ></textarea>
                                     <label for="floatingTextarea">Event Description</label>
                                 </div>
@@ -275,6 +298,7 @@ const Events = ()=> {
                                         class="form-control" 
                                         placeholder="Leave a comment here" 
                                         id="floatingTextarea"
+                                        onChange={(e)=> setBio(e.target.value)}
                                     ></textarea>
                                     <label for="floatingTextarea">Speaker's Bio</label>
                                 </div>
@@ -285,11 +309,12 @@ const Events = ()=> {
                                 <select 
                                     class="form-select form-select-lg mb-3" 
                                     aria-label=".form-select-lg example"
+                                    onChange={(e)=> setCategory(e.target.value)}
                                 >
                                     <option selected>Choose Event Type</option>
-                                    <option value="1">Virtual</option>
-                                    <option value="2">Seminar</option>
-                                    <option value="3">Outreach</option>
+                                    <option value="3">Virtual</option>
+                                    <option value="1">Seminar</option>
+                                    <option value="2">Outreach</option>
                                     <option value="4">Activities</option>
                                 </select>
                             </div>
@@ -299,6 +324,7 @@ const Events = ()=> {
                                         type="number" 
                                         class="form-control" 
                                         id="floatingInput" 
+                                        onChange={(e)=> setPhone(e.target.value)}
                                         placeholder="name@example.com" 
                                     />
                                     <label for="floatingInput">Phone number</label>
@@ -310,6 +336,7 @@ const Events = ()=> {
                                         type="date" 
                                         class="form-control" 
                                         id="floatingInput" 
+                                        onChange={(e)=> setDate(e.target.value)}
                                         placeholder="name@example.com" 
                                     />
                                     <label for="floatingInput">Date</label>
@@ -323,6 +350,7 @@ const Events = ()=> {
                                         type="text" 
                                         class="form-control" 
                                         id="floatingInput" 
+                                        onChange={(e)=> setFacebook(e.target.value)}
                                         placeholder="name@example.com" 
                                     />
                                     <label for="floatingInput">Facebook</label>
@@ -334,6 +362,7 @@ const Events = ()=> {
                                         type="text" 
                                         class="form-control" 
                                         id="floatingInput" 
+                                        onChange={(e)=> setYouTube(e.target.value)}
                                         placeholder="name@example.com" 
                                     />
                                     <label for="floatingInput">Youtube</label>
@@ -344,6 +373,7 @@ const Events = ()=> {
                                     <input 
                                         type="text" 
                                         class="form-control" 
+                                        onChange={(e)=> setSocials(e.target.value)}
                                         id="floatingInput" 
                                         placeholder="name@example.com" 
                                     />
@@ -354,7 +384,12 @@ const Events = ()=> {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Add event</button>
+                        <button 
+                            type="button" 
+                            class="btn btn-primary"
+                            data-bs-dismiss="modal"
+                            onClick={handleSubmitEvent}
+                        >Add event</button>
                     </div>
                     </div>
                 </div>

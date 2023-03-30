@@ -1,30 +1,93 @@
 import * as React from 'react';
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import MuiDrawer from '@mui/material/Drawer';
-import Box from '@mui/material/Box';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Link from '@mui/material/Link';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import EventIcon from '@mui/icons-material/Event';
+import ChurchIcon from '@mui/icons-material/Church';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import { useEffect, useState } from "react";
+import { createClient } from '@supabase/supabase-js';
 
+const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
+const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmZnZqdXR3eGtzenV2bnNxYXljIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjIwMTMxMDUsImV4cCI6MTk3NzU4OTEwNX0.JryH2jtpXFt-dwHAEdMVH0ykYB3cRfHXS0DKiGM1Z8c'
 
+const supabase = createClient(PROJECT_URI, PROJECT_ANON)
 
 function DashboardContent() {
+  const [users, setUsers] = useState([])
+  const [events, setEvents] = useState([])
+
+  let isMounted = false
+    
+  useEffect(() => {
+      const controller = new AbortController();
+
+      if(!isMounted) {
+          isMounted = true
+          const getUsers = async ()=> {
+              const results = await supabase
+              .from('profile')
+              .select(`*`)
+              setUsers(results.data)
+              console.log(results.data)
+          }
+          const getEvents = async ()=> {
+              const results = await supabase
+              .from('events')
+              .select(`*`)
+              setEvents(results.data)
+              console.log(results.data)
+          }
+          getEvents();
+          getUsers();
+      }
+
+
+      return ()=> {
+          controller.abort();
+      }
+  }, [])
+
+
+
   return (
     <>
-      
+      <div className="row">
+          <div className="col-lg-3 col-sm-12 mb-3">
+              <div class="card bg-success text-white">
+                  <div class="card-body">
+                      <PeopleAltIcon fontSize='large'/>
+                      <div class="mt-2 lead">Users</div>
+                      <h2 class="card-title" style={{fontSize:'1.8em'}}>{users?.length}</h2>
+                  </div>
+              </div>  
+          </div>
+          <div className="col-lg-3 col-sm-12 mb-3">
+              <div class="card bg-primary text-white">
+                  <div class="card-body">
+                      <EventIcon fontSize='large'/>
+                      <div class="mt-2 lead">Events</div>
+                      <h2 class="card-title" style={{fontSize:'1.8em'}}>{events?.length}</h2>
+                  </div>
+              </div>
+          </div>
+          <div className="col-lg-3 col-sm-12 mb-3">
+              <div class="card bg-dark text-white">
+                  <div class="card-body">
+                      <ChurchIcon fontSize='large'/>
+                      <div class="mt-2 lead">Chapters</div>
+                      <h2 class="card-title" style={{fontSize:'1.8em'}}></h2>
+                  </div>
+              </div>
+          </div>
+          <div className="col-lg-3 col-sm-12 mb-3">
+              <div class="card bg-danger text-white">
+                  <div class="card-body">
+                      <MonetizationOnIcon fontSize='large'/>
+                      <div class="mt-2 lead">Sponsors</div>
+                      <h2 class="card-title" style={{fontSize:'1.8em'}}></h2>
+                  </div>
+              </div>
+          </div>
+      </div>
     </>
   );
 }
