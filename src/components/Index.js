@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { Outlet } from "react-router-dom";
+import * as React from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -10,18 +10,23 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
-// import Chart from './Chart';
-import Deposits from './Deposits';
-import Orders from './Orders';
+import Tooltip from '@mui/material/Tooltip';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Avatar from '@mui/material/Avatar';
+import { createClient } from '@supabase/supabase-js';
+const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
+const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmZnZqdXR3eGtzenV2bnNxYXljIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjIwMTMxMDUsImV4cCI6MTk3NzU4OTEwNX0.JryH2jtpXFt-dwHAEdMVH0ykYB3cRfHXS0DKiGM1Z8c'
+
+const supabase = createClient(PROJECT_URI, PROJECT_ANON)
+
 
 function Copyright(props) {
   return (
@@ -84,11 +89,46 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
-function Layout() {
+
+
+const Layout = () => {
   const [open, setOpen] = React.useState(false);
+  const [profile, setProfile] = useState('');
+  const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const username = localStorage.getItem('username');
+
+  const navigate = useNavigate(); 
+
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+  
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+  
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+ 
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  const logout = async ()=> {
+    const { error } = await supabase.auth.signOut()
+
+    if(error) {
+      console.error(error)
+    }
+
+    navigate('/login')
+  }
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -122,9 +162,44 @@ function Layout() {
               Admin Portal
             </Typography>
             <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
+            <Box sx={{ flexGrow: 0 }}>
+                        <Tooltip title="Open settings">
+                        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                            <Avatar alt="Remy Sharp" src={profile ? profile.image : ''} />
+                        </IconButton>
+                        </Tooltip>
+                        <Menu
+                        sx={{ mt: '45px' }}
+                        id="menu-appbar"
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                        >
+                        {/* {settings.map((setting) => ( */}
+                            <MenuItem onClick={()=> {handleCloseUserMenu(); navigate('dashboard')}}>
+                            <Typography textAlign="center">Dashboard</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={()=> {handleCloseUserMenu();navigate('profile')}}>
+                            <Typography textAlign="center">Profile</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={handleCloseUserMenu} component="a" href="#/admin-register">
+                            <Typography textAlign="center">Register</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={logout}>
+                            <Typography textAlign="center">Logout</Typography>
+                            </MenuItem>
+                        {/* ))} */}
+                        </Menu>
+                    </Box>
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -156,7 +231,6 @@ function Layout() {
                 ? theme.palette.grey[100]
                 : theme.palette.grey[900],
             flexGrow: 1,
-            height: '100vh',
             overflow: 'auto',
           }}
         >
@@ -167,9 +241,10 @@ function Layout() {
           </Container>
         </Box>
       </Box>
-      
     </ThemeProvider>
   );
 }
 
 export default Layout
+
+

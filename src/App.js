@@ -8,6 +8,13 @@ import Users from "./components/Users";
 import Sponsors from "./components/Sponsors";
 import Chapters from "./components/Chapters";
 import Landing from "./components/Landing";
+import RequireAuth from './components/RequireAuth';
+
+const ROLES = {
+  'User': 'user',
+  'Editor': 'editor',
+  'Admin': 'admin'
+}
 
 const App = createHashRouter([
   {
@@ -26,32 +33,37 @@ const App = createHashRouter([
         element: <SignUp/>
       },
       {
-        path:'admin',
-        element: <Index/>,
+        element: <RequireAuth/>,
         children: [
           {
-            index: true,
-            path:'dashboard',
-            element: <Dashboard/>
-          },
-          {
-            path:'events',
-            element: <Events/>
-          },
-          {
-            path:'users',
-            element: <Users/>
-          },
-          {
-            path:'sponsors',
-            element: <Sponsors/>
-          },
-          {
-            path:'chapters',
-            element: <Chapters/>
+            path:'admin',
+            element: <Index/>,
+            children: [
+              {
+                index: true,
+                path:'dashboard',
+                element: <Dashboard/>
+              },
+              {
+                path:'events',
+                element: <Events/>
+              },
+              {
+                path:'users',
+                element: <Users/>
+              },
+              {
+                path:'sponsors',
+                element: <Sponsors/>
+              },
+              {
+                path:'chapters',
+                element: <Chapters/>
+              }
+            ]
           }
         ]
-      }
+      },
     ]
   }
 ])
