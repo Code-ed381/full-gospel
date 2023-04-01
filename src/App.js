@@ -19,6 +19,7 @@ const ROLES = {
 const App = createHashRouter([
   {
     path: '/',
+    element: <Index/>,
     children: [
       {
         index: 'true',
