@@ -33,35 +33,29 @@ const App = createHashRouter([
         element: <RequireAuth/>,
         children: [
           {
-            path: '/',
+            path:'admin',
+            element: <Index/>,
             children: [
               {
-                path:'admin',
-                element: <Index/>,
-                children: [
-                  {
-                    index: true,
-                    path:'dashboard',
-                    element: <Dashboard/>
-                  },
-                  {
-                    path:'events',
-                    element: <Events/>
-                  },
-                  {
-                    path:'users',
-                    element: <Users/>
-                  },
-                  {
-                    path:'sponsors',
-                    element: <Sponsors/>
-                  },
-                  {
-                    path:'chapters',
-                    element: <Chapters/>
-                  }
-                ]
-
+                index: true,
+                path:'dashboard',
+                element: <Dashboard/>
+              },
+              {
+                path:'events',
+                element: <Events/>
+              },
+              {
+                path:'users',
+                element: <Users/>
+              },
+              {
+                path:'sponsors',
+                element: <Sponsors/>
+              },
+              {
+                path:'chapters',
+                element: <Chapters/>
               }
             ]
           }
