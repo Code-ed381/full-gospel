@@ -115,6 +115,7 @@ export default function SignUp() {
             options: {
               emailRedirectTo: 'http://localhost:3000/#/admin/dashboard',
               data: {
+                role: 'admin',
                 chapter: chapter
               }
             }
