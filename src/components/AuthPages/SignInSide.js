@@ -53,10 +53,18 @@ export default function SignInSide() {
       .auth
       .signInWithPassword({ email, password })
 
-    setAuth({user})
-    navigate('/#/admin/dashboard')
-
-    console.log(user || error)
+    if(error) {
+      throw new Error(error.message);
+    }
+    else {
+      setAuth(user)
+      navigate('/admin/dashboard')
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      localStorage.setItem('supabase.auth.token', session.access_token);
+    }
+    console.log(user)
   };
 
   return (

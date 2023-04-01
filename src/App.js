@@ -21,10 +21,6 @@ const App = createHashRouter([
     path: '/',
     children: [
       {
-        path:'',
-        element: <Landing/>
-      },
-      {
         path:'login',
         element: <Login/>
       },
@@ -64,6 +60,10 @@ const App = createHashRouter([
           }
         ]
       },
+      {
+        path: '*',
+        element: <Landing/>
+      }
     ]
   }
 ])

@@ -181,22 +181,22 @@ const Events = ()=> {
                                         <Typography noWrap variant="subtitle1" color="text.secondary">
                                         {data?.description}
                                         </Typography>
-                                        <ol class="list-group list-group-flush">
-                                            <li class="list-group-item d-flex justify-content-between align-items-start">
-                                                <div class="ms-2 me-auto">
-                                                <div class="fw-bold">Host</div>
+                                        <ol className="list-group list-group-flush">
+                                            <li className="list-group-item d-flex justify-content-between align-items-start">
+                                                <div className="ms-2 me-auto">
+                                                <div className="fw-bold">Host</div>
                                                 {data?.host}
                                                 </div>
                                             </li>
-                                            <li class="list-group-item d-flex justify-content-between align-items-start">
-                                                <div class="ms-2 me-auto text-truncate">
-                                                <div class="fw-bold">Speaker</div>
+                                            <li className="list-group-item d-flex justify-content-between align-items-start">
+                                                <div className="ms-2 me-auto text-truncate">
+                                                <div className="fw-bold">Speaker</div>
                                                 {data?.speaker}
                                                 </div>
                                             </li>
-                                            <li class="list-group-item d-flex justify-content-between align-items-start">
-                                                <div class="ms-2 me-auto">
-                                                <div class="fw-bold">Chapter</div>
+                                            <li className="list-group-item d-flex justify-content-between align-items-start">
+                                                <div className="ms-2 me-auto">
+                                                <div className="fw-bold">Chapter</div>
                                                     {data?.chapter}
                                                 </div>
                                             </li>
@@ -220,20 +220,20 @@ const Events = ()=> {
 
 
             {/* <!-- Modal --> */}
-            <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true" >
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addEventModalLabel">Add Event</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div className="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true" >
+                <div className="modal-dialog modal-lg modal-dialog-centered">
+                    <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="addEventModalLabel">Add Event</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div className="modal-body">
                         <div className='row'>
                             <div className='col-md-6 col-sm-12'>
-                                <div class="form-floating mb-3">
+                                <div className="form-floating mb-3">
                                     <input 
                                         type="text" 
-                                        class="form-control" 
+                                        className="form-control" 
                                         id="floatingInput" 
                                         placeholder="name@example.com" 
                                         onChange={(e)=> setName(e.target.value)}
@@ -242,10 +242,10 @@ const Events = ()=> {
                                 </div>
                             </div>
                             <div className='col-md-6 col-sm-12'>
-                                <div class="form-floating mb-3">
+                                <div className="form-floating mb-3">
                                     <input 
                                         type="email" 
-                                        class="form-control" 
+                                        className="form-control" 
                                         id="floatingInput" 
                                         onChange={(e)=> setChapter(e.target.value)}
                                         placeholder="name@example.com" 
@@ -256,10 +256,10 @@ const Events = ()=> {
                         </div>
                         <div className='row'>
                             <div className='col-md-6 col-sm-12'>
-                                <div class="form-floating mb-3">
+                                <div className="form-floating mb-3">
                                     <input 
                                         type="text" 
-                                        class="form-control" 
+                                        className="form-control" 
                                         id="floatingInput" 
                                         onChange={(e)=> setHost(e.target.value)}
                                         placeholder="name@example.com" 
@@ -268,10 +268,10 @@ const Events = ()=> {
                                 </div>
                             </div>
                             <div className='col-md-6 col-sm-12'>
-                                <div class="form-floating mb-3">
+                                <div className="form-floating mb-3">
                                     <input 
                                         type="email" 
-                                        class="form-control" 
+                                        className="form-control" 
                                         id="floatingInput" 
                                         onChange={(e)=> setSpeaker(e.target.value)}
                                         placeholder="name@example.com" 
@@ -282,9 +282,9 @@ const Events = ()=> {
                         </div>
                         <div className='row mb-3'>
                             <div className='col-md-6 col-sm-12'>
-                                <div class="form-floating">
+                                <div className="form-floating">
                                     <textarea 
-                                        class="form-control" 
+                                        className="form-control" 
                                         placeholder="Leave a comment here" 
                                         id="floatingTextarea"
                                         onChange={(e)=> setComment(e.target.value)}
@@ -293,9 +293,9 @@ const Events = ()=> {
                                 </div>
                             </div>
                             <div className='col-md-6 col-sm-12'>
-                                <div class="form-floating">
+                                <div className="form-floating">
                                     <textarea 
-                                        class="form-control" 
+                                        className="form-control" 
                                         placeholder="Leave a comment here" 
                                         id="floatingTextarea"
                                         onChange={(e)=> setBio(e.target.value)}
@@ -307,7 +307,7 @@ const Events = ()=> {
                         <div className='row'>
                             <div className='col-md-4 col-sm-12'>
                                 <select 
-                                    class="form-select form-select-lg mb-3" 
+                                    className="form-select form-select-lg mb-3" 
                                     aria-label=".form-select-lg example"
                                     onChange={(e)=> setCategory(e.target.value)}
                                 >
@@ -319,10 +319,10 @@ const Events = ()=> {
                                 </select>
                             </div>
                             <div className='col-md-4 col-sm-12'>
-                                <div class="form-floating mb-3">
+                                <div className="form-floating mb-3">
                                     <input 
                                         type="number" 
-                                        class="form-control" 
+                                        className="form-control" 
                                         id="floatingInput" 
                                         onChange={(e)=> setPhone(e.target.value)}
                                         placeholder="name@example.com" 
@@ -331,10 +331,10 @@ const Events = ()=> {
                                 </div>
                             </div>
                             <div className='col-md-4 col-sm-12'>
-                                <div class="form-floating mb-3">
+                                <div className="form-floating mb-3">
                                     <input 
                                         type="date" 
-                                        class="form-control" 
+                                        className="form-control" 
                                         id="floatingInput" 
                                         onChange={(e)=> setDate(e.target.value)}
                                         placeholder="name@example.com" 
@@ -345,10 +345,10 @@ const Events = ()=> {
                         </div>
                         <div className='row'>
                             <div className='col-md-4 col-sm-12'>
-                                <div class="form-floating mb-3">
+                                <div className="form-floating mb-3">
                                     <input 
                                         type="text" 
-                                        class="form-control" 
+                                        className="form-control" 
                                         id="floatingInput" 
                                         onChange={(e)=> setFacebook(e.target.value)}
                                         placeholder="name@example.com" 
@@ -357,10 +357,10 @@ const Events = ()=> {
                                 </div>
                             </div>
                             <div className='col-md-4 col-sm-12'>
-                                <div class="form-floating mb-3">
+                                <div className="form-floating mb-3">
                                     <input 
                                         type="text" 
-                                        class="form-control" 
+                                        className="form-control" 
                                         id="floatingInput" 
                                         onChange={(e)=> setYouTube(e.target.value)}
                                         placeholder="name@example.com" 
@@ -369,10 +369,10 @@ const Events = ()=> {
                                 </div>
                             </div>
                             <div className='col-md-4 col-sm-12'>
-                                <div class="form-floating mb-3">
+                                <div className="form-floating mb-3">
                                     <input 
                                         type="text" 
-                                        class="form-control" 
+                                        className="form-control" 
                                         onChange={(e)=> setSocials(e.target.value)}
                                         id="floatingInput" 
                                         placeholder="name@example.com" 
@@ -382,11 +382,11 @@ const Events = ()=> {
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button 
                             type="button" 
-                            class="btn btn-primary"
+                            className="btn btn-primary"
                             data-bs-dismiss="modal"
                             onClick={handleSubmitEvent}
                         >Add event</button>

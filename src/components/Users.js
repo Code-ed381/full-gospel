@@ -65,8 +65,8 @@ function Users() {
                         {data?.map((data)=>
                             <Grid item md={3} xs={12}>
                                 <Paper>
-                                    <div class="card text-center">
-                                        <div class="card-header">
+                                    <div className="card text-center">
+                                        <div className="card-header">
                                             <center>
                                             <Avatar
                                                 alt="Remy Sharp"
@@ -75,17 +75,17 @@ function Users() {
                                             />
                                             </center>
                                         </div>
-                                        <div class="card-body">
-                                            <ul class="list-group list-group-flush">
-                                                <li class="list-group-item"><h5>{data?.full_name}</h5></li>
-                                                <li class="list-group-item">{data?.email}</li>
-                                                {data?.phone ? <li class="list-group-item">{data?.phone}</li> : <li class="list-group-item"><mark><var>No phone number</var></mark></li>}
+                                        <div className="card-body">
+                                            <ul className="list-group list-group-flush">
+                                                <li className="list-group-item"><h5>{data?.full_name}</h5></li>
+                                                <li className="list-group-item">{data?.email}</li>
+                                                {data?.phone ? <li className="list-group-item">{data?.phone}</li> : <li className="list-group-item"><mark><var>No phone number</var></mark></li>}
                                                 
-                                                <li class="list-group-item">{data?.chapter}</li>
-                                                <li class="list-group-item">{data?.nationality}</li>
+                                                <li className="list-group-item">{data?.chapter}</li>
+                                                <li className="list-group-item">{data?.nationality}</li>
                                             </ul>
                                         </div>
-                                        <div class="card-footer text-muted">
+                                        <div className="card-footer text-muted">
                                             <Button size="small">Deactivate</Button>
                                             <Button size="small" href="#text-buttons">Delete</Button>
                                         </div>

@@ -80,22 +80,22 @@ function Sponsors() {
                                         <Typography gutterBottom variant="h5" component="div">
                                         {data?.sponsors?.name}
                                         </Typography>
-                                        <ol class="list-group list-group-flush">
-                                            <li class="list-group-item d-flex justify-content-between align-items-start">
-                                                <div class="ms-2 me-auto">
-                                                <div class="fw-bold">Event</div>
+                                        <ol className="list-group list-group-flush">
+                                            <li className="list-group-item d-flex justify-content-between align-items-start">
+                                                <div className="ms-2 me-auto">
+                                                <div className="fw-bold">Event</div>
                                                 {data?.events?.name}
                                                 </div>
                                             </li>
-                                            <li class="list-group-item d-flex justify-content-between align-items-start">
-                                                <div class="ms-2 me-auto text-truncate">
-                                                <div class="fw-bold">Date</div>
+                                            <li className="list-group-item d-flex justify-content-between align-items-start">
+                                                <div className="ms-2 me-auto text-truncate">
+                                                <div className="fw-bold">Date</div>
                                                 {data?.created_at}
                                                 </div>
                                             </li>
-                                            <li class="list-group-item d-flex justify-content-between align-items-start">
-                                                <div class="ms-2 me-auto ">
-                                                <div class="fw-bold">Amount</div>
+                                            <li className="list-group-item d-flex justify-content-between align-items-start">
+                                                <div className="ms-2 me-auto ">
+                                                <div className="fw-bold">Amount</div>
                                                 {data?.sponsors?.amount}
                                                 </div>
                                             </li>

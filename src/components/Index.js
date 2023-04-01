@@ -20,6 +20,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import useAuth from '../hooks/useAuth';
 import Avatar from '@mui/material/Avatar';
 import { createClient } from '@supabase/supabase-js';
 const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
@@ -97,6 +98,7 @@ const Layout = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const username = localStorage.getItem('username');
+  const { setAuth } = useAuth();
 
   const navigate = useNavigate(); 
 
@@ -122,6 +124,8 @@ const Layout = () => {
 
   const logout = async ()=> {
     const { error } = await supabase.auth.signOut()
+    setAuth(null);
+    localStorage.clear()
 
     if(error) {
       console.error(error)
