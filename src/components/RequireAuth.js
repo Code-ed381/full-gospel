@@ -17,7 +17,7 @@ const supabase = createClient(PROJECT_URI, PROJECT_ANON, {
 })
 
 const RequireAuth = () => {
-    const { auth, setAuth, loading } = useAuth();
+    const { auth, setAuth, loading, setLoading } = useAuth();
     const location = useLocation();
 
     useEffect(()=> {
@@ -35,6 +35,10 @@ const RequireAuth = () => {
         }
 
         getUser()
+
+        setTimeout(() => {
+            setLoading(false)
+        }, 10000);
 
 
         return ()=> {

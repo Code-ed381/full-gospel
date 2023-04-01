@@ -21,6 +21,7 @@ const App = createHashRouter([
     path: '/',
     children: [
       {
+        index: 'true',
         path:'login',
         element: <Login/>
       },
