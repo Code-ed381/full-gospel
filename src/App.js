@@ -1,4 +1,4 @@
-import {createHashRouter} from "react-router-dom";
+import {createHashRouter, redirect } from "react-router-dom";
 import Index from "./components/Index";
 import Events from "./components/Events";
 import Login from "./components/AuthPages/SignInSide";
@@ -9,6 +9,7 @@ import Sponsors from "./components/Sponsors";
 import Chapters from "./components/Chapters";
 import Landing from "./components/Landing";
 import RequireAuth from './components/RequireAuth';
+import useAuth from "./hooks/useAuth";
 
 const ROLES = {
   'User': 'user',
@@ -19,7 +20,7 @@ const ROLES = {
 const App = createHashRouter([
   {
     path: '/',
-    element: <Index/>,
+    loader: redirect('login'),
     children: [
       {
         index: 'true',
