@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import useAuth from '../../hooks/useAuth';
+import Alert from '@mui/material/Alert';
 
 const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
 const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmZnZqdXR3eGtzenV2bnNxYXljIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjIwMTMxMDUsImV4cCI6MTk3NzU4OTEwNX0.JryH2jtpXFt-dwHAEdMVH0ykYB3cRfHXS0DKiGM1Z8c'
@@ -40,6 +41,7 @@ const theme = createTheme();
 export default function SignInSide() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errMsg, setErrMsg] = useState('');
   const { setAuth } = useAuth();
   const navigate = useNavigate();
 
@@ -54,7 +56,7 @@ export default function SignInSide() {
       .signInWithPassword({ email, password })
 
     if(error) {
-      throw new Error(error.message);
+      setErrMsg(error.message)
     }
     else {
       setAuth(user)
@@ -101,6 +103,12 @@ export default function SignInSide() {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
+            { errMsg ? 
+              <Alert variant="filled" severity="error" sx={{ width: '100%' }}>
+                {errMsg}
+              </Alert> :
+              ""          
+            }
             <Box sx={{ mt: 1 }}>
               <TextField
                 margin="normal"

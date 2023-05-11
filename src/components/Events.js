@@ -10,7 +10,9 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
@@ -48,10 +50,11 @@ const Events = ()=> {
     const [bio, setBio] = useState('');
     const [category, setCategory] = useState('');
     const [date, setDate] = useState(new Date())
-    const [facebook, setFacebook] = useState('');
-    const [youtube, setYouTube] = useState('');
+    const [time, setTime] = useState('')
+    const [imgUrl, setImgUrl] = useState();
+    const [imgName, setImgName] = useState('');
     const [phone, setPhone] = useState();
-    const [socials, setSocials] = useState('');
+    // const [socials, setSocials] = useState('');
 
     const navigate = useNavigate();
 
@@ -78,29 +81,32 @@ const Events = ()=> {
 
         return ()=> {
             controller.abort();
+            isMounted = false
         }
     }, [])
 
     const handleSubmitEvent = async (e) => {
       e.preventDefault();
 
+      console.log(imgUrl)
+      console.log(imgName)
+
       try {
         const { data, error } = await supabase
         .from('events')
         .insert([
             { 
-                category_id: category,
+                categories_id: category,
                 name: name, 
                 description: comment,
                 phone_number: phone,
                 date: date,
-                facebook: facebook,
-                youtube: youtube,
-                other_socials: socials,
+                time: time,
                 chapter: chapter,
                 speaker: speaker,
                 host: host,
                 speaker_bio: bio,
+                poster_url: imgName
 
             },
         ])
@@ -109,9 +115,9 @@ const Events = ()=> {
                 button: "Done",
                 timer: 3000,
             });
-            setTimeout(() => {
-                navigate(0)
-            }, 3000);
+            // setTimeout(() => {
+            //     navigate(0)
+            // }, 3000);
         }
         else {
             swal("Failed!", "Event could not be added", "error", {
@@ -157,16 +163,11 @@ const Events = ()=> {
                 {data ? (
                     <>
                         {data?.map((data, i)=> 
-                            <Grid item md={3} key={i} xs={12}>
+                            <Grid item md={4} key={i} xs={12}>
                                 <Card>
                                     <CardHeader
                                         avatar={
                                             <Avatar alt="Travis Howard" src={data?.profile?.avatar_url} />
-                                        }
-                                        action={
-                                        <IconButton aria-label="settings">
-                                            <MoreVertIcon />
-                                        </IconButton>
                                         }
                                         title={data?.profile?.full_name}
                                         subheader={data?.profile?.chapter}
@@ -206,6 +207,7 @@ const Events = ()=> {
                                         <Button size="small">Share</Button>
                                         <Button size="small">View Details</Button>
                                         <Button size="small">Delete</Button>
+                                        {data?.poster_url ? '' : <Button size="small">Add Poster</Button>}
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -221,7 +223,7 @@ const Events = ()=> {
 
             {/* <!-- Modal --> */}
             <div className="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true" >
-                <div className="modal-dialog modal-lg modal-dialog-centered">
+                <div className="modal-dialog modal-xl modal-dialog-centered">
                     <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title" id="addEventModalLabel">Add Event</h5>
@@ -229,7 +231,7 @@ const Events = ()=> {
                     </div>
                     <div className="modal-body">
                         <div className='row'>
-                            <div className='col-md-6 col-sm-12'>
+                            <div className='col-md-4 col-sm-12'>
                                 <div className="form-floating mb-3">
                                     <input 
                                         type="text" 
@@ -241,7 +243,7 @@ const Events = ()=> {
                                     <label for="floatingInput">Event name</label>
                                 </div>
                             </div>
-                            <div className='col-md-6 col-sm-12'>
+                            <div className='col-md-4 col-sm-12'>
                                 <div className="form-floating mb-3">
                                     <input 
                                         type="email" 
@@ -253,9 +255,7 @@ const Events = ()=> {
                                     <label for="floatingInput">Chapter</label>
                                 </div>
                             </div>
-                        </div>
-                        <div className='row'>
-                            <div className='col-md-6 col-sm-12'>
+                            <div className='col-md-4 col-sm-12'>
                                 <div className="form-floating mb-3">
                                     <input 
                                         type="text" 
@@ -267,7 +267,9 @@ const Events = ()=> {
                                     <label for="floatingInput">Host</label>
                                 </div>
                             </div>
-                            <div className='col-md-6 col-sm-12'>
+                        </div>
+                        <div className='row'>
+                            <div className='col-md-4 col-sm-12'>
                                 <div className="form-floating mb-3">
                                     <input 
                                         type="email" 
@@ -279,9 +281,7 @@ const Events = ()=> {
                                     <label for="floatingInput">Speaker</label>
                                 </div>
                             </div>
-                        </div>
-                        <div className='row mb-3'>
-                            <div className='col-md-6 col-sm-12'>
+                            <div className='col-md-4 col-sm-12'>
                                 <div className="form-floating">
                                     <textarea 
                                         className="form-control" 
@@ -292,7 +292,7 @@ const Events = ()=> {
                                     <label for="floatingTextarea">Event Description</label>
                                 </div>
                             </div>
-                            <div className='col-md-6 col-sm-12'>
+                            <div className='col-md-4 col-sm-12'>
                                 <div className="form-floating">
                                     <textarea 
                                         className="form-control" 
@@ -304,8 +304,21 @@ const Events = ()=> {
                                 </div>
                             </div>
                         </div>
-                        <div className='row'>
+                        <div className='row '>
                             <div className='col-md-4 col-sm-12'>
+                                <div className="form-floating mb-3">
+                                    <input 
+                                        type="time" 
+                                        className="form-control" 
+                                        id="floatingInput" 
+                                        onChange={(e)=> setTime(e.target.value)}
+                                        placeholder="name@example.com" 
+                                    />
+                                    <label for="floatingInput">Time</label>
+                                </div>
+                            </div>
+
+                            {/* <div className='col-md-4 col-sm-12'>
                                 <select 
                                     className="form-select form-select-lg mb-3" 
                                     aria-label=".form-select-lg example"
@@ -317,7 +330,7 @@ const Events = ()=> {
                                     <option value="2">Outreach</option>
                                     <option value="4">Activities</option>
                                 </select>
-                            </div>
+                            </div> */}
                             <div className='col-md-4 col-sm-12'>
                                 <div className="form-floating mb-3">
                                     <input 
@@ -344,6 +357,37 @@ const Events = ()=> {
                             </div>
                         </div>
                         <div className='row'>
+                            <div className='col-md-4 col-sm-12'>
+                                <div class="input-group mb-3">                                
+                                    <label class="input-group-text" for="inputGroupSelect01">Type of Event</label>
+                                    <select 
+                                        class="form-select" 
+                                        id="inputGroupSelect01"
+                                        aria-label=".form-select-lg example"
+                                        onChange={(e)=> setCategory(e.target.value)}
+                                    >
+                                        <option selected>Choose...</option>
+                                        <option value="3">Virtual</option>
+                                        <option value="1">Seminar</option>
+                                        <option value="2">Outreach</option>
+                                        <option value="4">Activities</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className='col-md-8 col-sm-12'>
+                                <div class="mb-3">
+                                    {/* <label for="formFile" class="form-label">Upload flyer</label> */}
+                                    <input 
+                                        class="form-control" 
+                                        type="file" 
+                                        id="formFile" 
+                                        onChange={(e)=> {setImgUrl(e.target.files[0]); setImgName(e.target.files[0].name)}}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        {/* <div className='row'>
                             <div className='col-md-4 col-sm-12'>
                                 <div className="form-floating mb-3">
                                     <input 
@@ -380,7 +424,7 @@ const Events = ()=> {
                                     <label for="floatingInput">Other Socials</label>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
