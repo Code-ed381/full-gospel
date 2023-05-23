@@ -118,6 +118,7 @@ const Events = ()=> {
                 categories(name),
                 profile(*)     
             `)
+            .order('id', { ascending: false})
             isMounted && setData(results.data)
             console.log(results.data)
         }
