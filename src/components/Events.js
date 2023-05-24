@@ -54,6 +54,7 @@ const Events = ()=> {
     const [profile, setProfile] = useState('');
     const [successMsg, setSuccessMsg] = useState('')
     const [errMsg, setErrMsg] = useState('')
+    const [deleteEvent, setDeleteEvent] = useState('');
 
     const [activeStep, setActiveStep] = React.useState(0);
     const [skipped, setSkipped] = React.useState(new Set());
@@ -106,6 +107,16 @@ const Events = ()=> {
 
     console.log(auth)
 
+    const getEvents = async ()=> {
+        const results = await supabase
+        .from('events')
+        .select(`*,
+            categories(name),
+            profile(*)     
+        `)
+        .order('id', { ascending: false})
+        setData(results.data)
+    }
     
     useEffect(() => {
         const controller = new AbortController();
@@ -211,6 +222,37 @@ const Events = ()=> {
       } 
     };
 
+    const handleDelete = async (event)=> {
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this event!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then(async (willDelete) => {
+            if (willDelete) {                            
+                const { data, error } = await supabase
+                .from('events')
+                .delete()
+                .eq('id', event)
+
+                if(error){
+                    swal("Delete event failed!", {
+                        icon: "error",
+                    });
+                }
+                else {
+                    swal("Event has been deleted!", {
+                        icon: "success",
+                    });
+
+                    getEvents()
+                }
+            }
+        });
+    }
+
     const handleExpandClick = () => {
       setExpanded(!expanded);
     };
@@ -260,7 +302,7 @@ const Events = ()=> {
                                     />
                                     <CardContent>
                                         <Typography noWrap variant="subtitle1" color="text.secondary">
-                                        {data?.description}
+                                        {data?.name}
                                         </Typography>
                                         <ol className="list-group list-group-flush">
                                             <li className="list-group-item d-flex justify-content-between align-items-start">
@@ -285,8 +327,15 @@ const Events = ()=> {
                                     </CardContent>
                                     <CardActions>
                                         <Button size="small">Share</Button>
-                                        <Button size="small">View Details</Button>
-                                        <Button size="small">Delete</Button>
+                                        <Button 
+                                            size="small"
+                                            component='a'
+                                            href={`#/admin/event/${data?.id}`}
+                                        >View Details</Button>
+                                        <Button 
+                                            size="small" 
+                                            onClick={()=> handleDelete(data?.id)}
+                                        >Delete</Button>
                                         {data?.poster_url ? '' : <Button size="small">Add Poster</Button>}
                                     </CardActions>
                                 </Card>
