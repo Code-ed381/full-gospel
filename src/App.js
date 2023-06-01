@@ -1,6 +1,10 @@
 import {createHashRouter, Navigate} from "react-router-dom";
 import Index from "./components/Index";
 import Events from "./components/Events";
+import Gallery from "./components/Gallery";
+import News from "./components/News";
+import Podcast from "./components/Podcast";
+import Testimonies from "./components/Testimonies";
 import Event from "./components/Event";
 import Login from "./components/AuthPages/SignInSide";
 import SignUp from "./components/AuthPages/SignUp";
@@ -46,6 +50,22 @@ const App = createHashRouter([
               {
                 path:'events',
                 element: <Events/>
+              },
+              {
+                path:'podcasts',
+                element: <Podcast/>
+              },
+              {
+                path:'testimonies',
+                element: <Testimonies/>
+              },
+              {
+                path:'gallery',
+                element: <Gallery/>
+              },
+              {
+                path:'news',
+                element: <News/>
               },
               {
                 path:'event/:event_name',

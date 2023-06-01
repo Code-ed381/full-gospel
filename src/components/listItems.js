@@ -10,6 +10,10 @@ import PeopleIcon from '@mui/icons-material/People';
 import PaidIcon from '@mui/icons-material/Paid';
 import ChurchIcon from '@mui/icons-material/Church';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import RecommendIcon from '@mui/icons-material/Recommend';
+import NewspaperIcon from '@mui/icons-material/Newspaper';
+import CollectionsIcon from '@mui/icons-material/Collections';
+import PodcastsRoundedIcon from '@mui/icons-material/PodcastsRounded';
 
 
 export const mainListItems = (
@@ -60,9 +64,41 @@ export const mainListItems = (
 export const secondaryListItems = (
   <React.Fragment>
     <ListSubheader component="div" inset>
-      Saved reports
+      Socials
     </ListSubheader>
-    <ListItemButton>
+    <Link to='testimonies' style={{ textDecoration: 'none', color: '#000'  }}>
+      <ListItemButton>
+        <ListItemIcon>
+          <RecommendIcon />
+        </ListItemIcon>
+        <ListItemText primary="Testimonies" />
+      </ListItemButton>
+    </Link>
+    <Link to='news' style={{ textDecoration: 'none', color: '#000'  }}>
+      <ListItemButton>
+        <ListItemIcon>
+          <NewspaperIcon />
+        </ListItemIcon>
+        <ListItemText primary="News" />
+      </ListItemButton>
+    </Link>
+    <Link to='gallery' style={{ textDecoration: 'none', color: '#000'  }}>
+      <ListItemButton>
+        <ListItemIcon>
+          <CollectionsIcon />
+        </ListItemIcon>
+        <ListItemText primary="Gallery" />
+      </ListItemButton>
+    </Link>
+    <Link to='podcast' style={{ textDecoration: 'none', color: '#000'  }}>
+      <ListItemButton>
+        <ListItemIcon>
+          <PodcastsRoundedIcon />
+        </ListItemIcon>
+        <ListItemText primary="Podcast" />
+      </ListItemButton>
+    </Link>
+    {/* <ListItemButton>
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
@@ -79,6 +115,6 @@ export const secondaryListItems = (
         <AssignmentIcon />
       </ListItemIcon>
       <ListItemText primary="Year-end sale" />
-    </ListItemButton>
+    </ListItemButton> */}
   </React.Fragment>
 );
