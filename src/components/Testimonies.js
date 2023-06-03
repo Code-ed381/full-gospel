@@ -1,11 +1,6 @@
 import * as React from 'react';
 import swal from 'sweetalert';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
@@ -31,30 +26,19 @@ const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabase = createClient(PROJECT_URI, PROJECT_ANON)
 
-const steps = ['Add poster', 'Event description', 'Date and time'];
+const steps = ['Testimony', 'Add posters' ];
 
 const Testimonies = ()=> {
     const [expanded, setExpanded] = React.useState(false);
     const [data, setData] = useState([]);
-    const [name, setName] = useState('');
-    const [host, setHost] = useState('');
-    const [speaker, setSpeaker] = useState('');
-    const [chapter, setChapter] = useState('');
-    const [comment, setComment] = useState('');
-    const [bio, setBio] = useState('');
-    const [category, setCategory] = useState('');
-    const [date, setDate] = useState(new Date())
-    const [date_to, setDate_to] = useState(new Date())
-    const [time, setTime] = useState('')
-    const [time_to, setTime_to] = useState('')
+    const [testimony, setTestimony] = useState('');
+    const [testimonySuccess, setTestimonySuccess] = useState('')
+    const [testimonyId, setTestimonyId] = useState('')
+    const [title, setTitle] = useState('');
     const [img, setImg] = useState();
     const [imgName, setImgName] = useState('');
-    const [imgURL, setImgURL] = useState('');
-    const [phone, setPhone] = useState();
-    const [profile, setProfile] = useState('');
     const [successMsg, setSuccessMsg] = useState('')
     const [errMsg, setErrMsg] = useState('')
-    const [deleteEvent, setDeleteEvent] = useState('');
 
     const [activeStep, setActiveStep] = React.useState(0);
     const [skipped, setSkipped] = React.useState(new Set());
@@ -66,6 +50,13 @@ const Testimonies = ()=> {
     const isStepSkipped = (step) => {
         return skipped.has(step);
     };
+
+    const handleFileChange = (event) => {
+        const files = event.target.files;
+        setImg(files)
+        const fileNames = Array.from(files).map((file) => file.name);
+        setImgName(fileNames);
+      };
 
     const handleNext = () => {
         let newSkipped = skipped;
@@ -122,28 +113,18 @@ const Testimonies = ()=> {
         const controller = new AbortController();
         var isMounted = true
 
-        const getEvents = async ()=> {
+        const getTestimonies = async ()=> {
             const results = await supabase
-            .from('events')
+            .from('testimonies_gallery')
             .select(`*,
-                categories(name),
-                profile(*)     
+                testimonies(*)
             `)
             .order('id', { ascending: false})
             isMounted && setData(results.data)
             console.log(results.data)
         }
-        const getProfile = async ()=> {
-            const results = await supabase
-            .from('profile')
-            .select('*')
-            .eq('user_id', auth?.id)
-            isMounted && setProfile(results?.data[0])
-            console.log(results.data[0].id)
-        }
 
-        getEvents()
-        getProfile()
+        getTestimonies()
 
         return ()=> {
             isMounted = false
@@ -152,71 +133,64 @@ const Testimonies = ()=> {
     }, [])
 
     const handleFlyerUpload = async ()=> {
-        const { error } = await supabase
+        const files = Array.from(img).map((file)=> supabase
           .storage
           .from('images')
-          .upload(imgName, img, {
+          .upload(`${file.name}`, file, {
             cacheControl: '3600',
             upsert: false
-        })
+        }))
 
-        if(error) {
-            console.log(error)
-            setErrMsg('Error!! Flyer Failed to upload')
+        try {
+            const responses = await Promise.all(files);
+            console.log(responses)
         }
-        else {
-            const { data } = supabase
-            .storage
-            .from('images')
-            .getPublicUrl(imgName)
-    
-            setImgURL(data.publicUrl)
-            console.log(data.publicUrl)
-            setSuccessMsg('Flyer uploaded successfully')
+        catch (error) {
+            // Handle error
+            console.log(error)
+        }
+
+        try {
+            getImagesPublicUrls(imgName)
+        }
+        catch(error) {
+            console.log(error)
         }
     }
 
     const handleSubmitEvent = async (e) => {
       e.preventDefault();
 
-      console.log(img)
-      console.log(imgName)
-
       try {
-        const { data, error } = await supabase
-        .from('events')
+        const { data: insertedData, error } = await supabase
+        .from('testimonies')
         .insert([
             { 
-                categories_id: category,
-                name: name, 
-                description: comment,
-                phone_number: phone,
-                date: date,
-                date_to: date_to,
-                time: time,
-                time_to: time_to,
-                chapter: chapter,
-                speaker: speaker,
-                host: host,
-                speaker_bio: bio,
-                poster_url: imgURL,
-                profile_id: profile?.id
-
+                title: title,
+                testimony: testimony, 
             },
         ])
         if(error) {
-            swal("Failed!", "Event could not be added", "error", {
+            swal("Failed!", "Testimony could not be added", "error", {
                 button: "Ok!",
                 timer: 3000,
             });
         }
         else {
-            swal("Success!", "Event has been added", "success", {
-                button: "Done",
-                timer: 3000,
-            });
+            setTestimonySuccess("Successful")
+
+            let { data: testimonies, error } = await supabase
+            .from('testimonies')
+            .select('*')
+            .order('id', { ascending: false})
+            .limit(1)
+
+            if(error) throw error
+
+            setTestimonyId(testimonies[0].id)
         }
-        console.log(data || error)
+        console.log(insertedData)
+        // return insertedData
       } catch (error) {
         console.error(error)
       } 
@@ -257,6 +231,41 @@ const Testimonies = ()=> {
       setExpanded(!expanded);
     };
 
+    const getImagesPublicUrls = async (paths) => {
+        const promises = paths.map((path) =>
+          supabase.storage.from('images').getPublicUrl(path)
+        );
+      
+        try {
+            const results = await Promise.all(promises);
+            
+            for (const values of results) {
+                const { data, error } = await supabase
+                  .from('testimonies_gallery')
+                  .insert([
+                    {
+                        testimony: testimonyId,
+                        posterUrl: values.data.publicUrl
+                    }
+                  ]);
+            
+                if (error) {
+                  // Handle error
+                  console.error(error);
+                }
+                else {
+                    swal("Success!", "Testimony has been added", "success", {
+                        button: "Done",
+                        timer: 3000,
+                    });
+                }
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+    };
+
     return(
         <>
             <Paper
@@ -265,8 +274,8 @@ const Testimonies = ()=> {
             >
                 <InputBase
                     sx={{ ml: 1, flex: 1 }}
-                    placeholder="Search Events"
-                    inputProps={{ 'aria-label': 'search events' }}
+                    placeholder="Search Testimony"
+                    inputProps={{ 'aria-label': 'search testimony' }}
                 />
                 <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
                     <SearchIcon />
@@ -279,72 +288,27 @@ const Testimonies = ()=> {
                 sx={{ mb: '12px' }}
                 data-bs-toggle="modal" 
                 data-bs-target="#addEventModal"
-            >Add event</Button>
+            >Add testimony</Button>
 
             <Grid container spacing={2}>
                 {data ? (
                     <>
                         {data?.map((data, i)=> 
-                            <Grid item md={4} key={i} xs={12}>
-                                <Card>
-                                    <CardHeader
-                                        avatar={
-                                            <Avatar alt="Travis Howard" src={data?.profile?.avatar_url} />
-                                        }
-                                        title={data?.profile?.full_name}
-                                        subheader={data?.profile?.chapter}
-                                    />
-                                    <CardMedia
-                                        component="img"
-                                        height="194"
-                                        image={data?.poster_url}
-                                        alt="event image"
-                                    />
-                                    <CardContent>
-                                        <Typography noWrap variant="subtitle1" color="text.secondary">
-                                        {data?.name}
-                                        </Typography>
-                                        <ol className="list-group list-group-flush">
-                                            <li className="list-group-item d-flex justify-content-between align-items-start">
-                                                <div className="ms-2 me-auto">
-                                                <div className="fw-bold">Host</div>
-                                                {data?.host}
-                                                </div>
-                                            </li>
-                                            <li className="list-group-item d-flex justify-content-between align-items-start">
-                                                <div className="ms-2 me-auto text-truncate">
-                                                <div className="fw-bold">Speaker</div>
-                                                {data?.speaker}
-                                                </div>
-                                            </li>
-                                            <li className="list-group-item d-flex justify-content-between align-items-start">
-                                                <div className="ms-2 me-auto">
-                                                <div className="fw-bold">Chapter</div>
-                                                    {data?.chapter}
-                                                </div>
-                                            </li>
-                                        </ol>
-                                    </CardContent>
-                                    <CardActions>
-                                        <Button size="small">Share</Button>
-                                        <Button 
-                                            size="small"
-                                            component='a'
-                                            href={`#/admin/event/${data?.id}`}
-                                        >View Details</Button>
-                                        <Button 
-                                            size="small" 
-                                            onClick={()=> handleDelete(data?.id)}
-                                        >Delete</Button>
-                                        {data?.poster_url ? '' : <Button size="small">Add Poster</Button>}
-                                    </CardActions>
-                                </Card>
+                            <Grid item md={3} key={i} xs={12}>
+                                <div class="card">
+                                <img src={data?.posterUrl} class="card-img-top" alt="..."/>
+                                <div class="card-body">
+                                    <h5 class="card-title">{data?.title}</h5>
+                                    <p class="card-text">{data?.testimony}</p>
+                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                </div>
+                                </div>
                             </Grid>
                         )}
                     </>
                 ) : (
-                    <h4>
-                        No Events Found
+                    <h4 className='m-4'>
+                        No testimonies Found
                     </h4>
                 )}
             </Grid>
@@ -352,10 +316,10 @@ const Testimonies = ()=> {
 
             {/* <!-- Modal --> */}
             <div className="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true" >
-                <div className="modal-dialog modal-lg modal-dialog-centered">
+                <div className="modal-dialog modal-md modal-dialog-centered">
                     <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title" id="addEventModalLabel">Add Event</h5>
+                        <h5 className="modal-title" id="addEventModalLabel">Add Testimony</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
@@ -393,7 +357,41 @@ const Testimonies = ()=> {
                         ) : (
                             <>
                                 {activeStep === 0 ? 
-                                    <div class="m-4">
+                                    <>
+                                        <div class="form-floating mt-4 mx-3">
+                                            <input 
+                                                type="text" 
+                                                class="form-control" 
+                                                id="floatingInput" 
+                                                placeholder="testimony title" 
+                                                onChange={(e)=> setTitle(e.target.value)}
+                                            />
+                                            <label for="floatingInput">Title</label>
+                                        </div>
+                                        <div class="form-floating mt-4 mx-3">
+                                            <textarea 
+                                                class="form-control" 
+                                                placeholder="Leave a comment here" 
+                                                id="floatingTextarea2" 
+                                                style={{height: '100px'}}
+                                                onChange={(e)=> setTestimony(e.target.value)}
+                                            ></textarea>
+                                            <label htmlFor="floatingTextarea2">Testimony</label>
+                                        </div>
+                                        {testimonySuccess ? (
+                                            <></>
+                                        ) : (
+                                            <div class="mt-3 d-md-flex justify-content-md-end">
+                                                <button 
+                                                    class="btn btn-primary me-md-2" 
+                                                    type="button" 
+                                                    onClick={handleSubmitEvent}
+                                                >Add testimony</button>
+                                            </div>
+                                        )}
+                                    </>
+                                : activeStep === 1 ? 
+                                    <div class="mt-4 mx-3">
                                         {errMsg ? 
                                         <>
                                             <Alert severity="error">
@@ -410,289 +408,59 @@ const Testimonies = ()=> {
                                         </> :
                                             (
                                                 <>
-                                                    <Alert severity="info">Upload poster first and click next</Alert>
-                                                    <h6 className='mt-3'>Upload poster</h6>
+                                                    {/* <Alert severity="info">Upload posters first and click next</Alert> */}
+                                                    <h6 className='mt-3'>Upload posters</h6>
+                                                    
                                                     <input 
                                                         class="form-control" 
                                                         type="file" 
                                                         id="formFile" 
-                                                        onChange={(e)=> {setImg(e.target.files[0]); setImgName(e.target.files[0].name)}}
+                                                        onChange={handleFileChange}
+                                                        multiple
                                                     />
+{/*                                                     
                                                     <div class="mt-3 d-md-flex justify-content-md-end">
-                                                        <button class="btn btn-primary me-md-2" type="button" onClick={handleFlyerUpload}>Upload</button>
-                                                    </div>
+                                                        <button 
+                                                            class="btn btn-primary me-md-2" 
+                                                            type="button" 
+                                                            onClick={handleFlyerUpload}
+                                                            // onClick={()=> console.log(img)}
+                                                        >Upload</button>
+                                                    </div> */}
                                                 </>
                                             )
                                         }
                                     </div>
-                                : activeStep === 1 ? 
-                                    <div className='m-3'>
-                                        <div className='row mt-5'>
-                                            <div className='col-md-6 col-sm-12'>
-                                                <div className="form-floating mb-3">
-                                                    <input 
-                                                        type="text" 
-                                                        className="form-control" 
-                                                        id="floatingInput" 
-                                                        placeholder="name@example.com" 
-                                                        onChange={(e)=> setName(e.target.value)}
-                                                    />
-                                                    <label for="floatingInput">Event name</label>
-                                                </div>
-                                            </div>
-                                            <div className='col-md-6 col-sm-12'>
-                                                <div className="form-floating mb-3">
-                                                    <input 
-                                                        type="email" 
-                                                        className="form-control" 
-                                                        id="floatingInput" 
-                                                        onChange={(e)=> setChapter(e.target.value)}
-                                                        placeholder="name@example.com" 
-                                                    />
-                                                    <label for="floatingInput">Venue</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className='row'>
-                                            <div className='col-md-6 col-sm-12'>
-                                                <div className="form-floating mb-3">
-                                                    <input 
-                                                        type="text" 
-                                                        className="form-control" 
-                                                        id="floatingInput" 
-                                                        onChange={(e)=> setHost(e.target.value)}
-                                                        placeholder="name@example.com" 
-                                                    />
-                                                    <label for="floatingInput">Host</label>
-                                                </div>
-                                            </div>
-                                            <div className='col-md-6 col-sm-12'>
-                                                <div className="form-floating mb-3">
-                                                    <input 
-                                                        type="email" 
-                                                        className="form-control" 
-                                                        id="floatingInput" 
-                                                        onChange={(e)=> setSpeaker(e.target.value)}
-                                                        placeholder="name@example.com" 
-                                                    />
-                                                    <label for="floatingInput">Speaker</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className='row'>
-                                            <div className='col-md-6 col-sm-12'>
-                                                <div className="form-floating mb-3">
-                                                    <textarea 
-                                                        className="form-control" 
-                                                        placeholder="Leave a comment here" 
-                                                        id="floatingTextarea"
-                                                        onChange={(e)=> setComment(e.target.value)}
-                                                    ></textarea>
-                                                    <label for="floatingTextarea">Event Description</label>
-                                                </div>
-                                            </div>
-                                            <div className='col-md-6 col-sm-12'>
-                                                <div className="form-floating">
-                                                    <textarea 
-                                                        className="form-control" 
-                                                        placeholder="Leave a comment here" 
-                                                        id="floatingTextarea"
-                                                        onChange={(e)=> setBio(e.target.value)}
-                                                    ></textarea>
-                                                    <label for="floatingTextarea">Speaker's Bio</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className='row'>
-                                            <div className='col-md-6 col-sm-12'>
-                                                <select 
-                                                    className="form-select form-select-md mb-3" 
-                                                    aria-label=".form-select-md example"
-                                                    onChange={(e)=> setCategory(e.target.value)}
-                                                >
-                                                    <option selected>Choose Event Type</option>
-                                                    <option value="3">Virtual</option>
-                                                    <option value="1">Seminar</option>
-                                                    <option value="2">Outreach</option>
-                                                    <option value="4">Activities</option>
-                                                </select>
-                                            </div>
-                                            <div className='col-md-6 col-sm-12'>
-                                                <div className="form-floating mb-3">
-                                                    <input 
-                                                        type="number" 
-                                                        className="form-control" 
-                                                        id="floatingInput" 
-                                                        onChange={(e)=> setPhone(e.target.value)}
-                                                        placeholder="name@example.com" 
-                                                    />
-                                                    <label for="floatingInput">Phone number</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                : activeStep === 2 ?
-                                    <>
-                                        <div className='row m-4'>
-                                            <h4>Date</h4>
-                                            <div className='col-md-6 col-sm-12'>
-                                                <div className="form-floating mb-3">
-                                                    <input 
-                                                        type="date" 
-                                                        className="form-control" 
-                                                        id="floatingInput" 
-                                                        onChange={(e)=> setDate(e.target.value)}
-                                                        placeholder="name@example.com" 
-                                                    />
-                                                    <label for="floatingInput">From</label>
-                                                </div>
-                                            </div>
-                                            <div className='col-md-6 col-sm-12'>
-                                                <div className="form-floating mb-3">
-                                                    <input 
-                                                        type="date" 
-                                                        className="form-control" 
-                                                        id="floatingInput" 
-                                                        onChange={(e)=> setDate_to(e.target.value)}
-                                                        placeholder="name@example.com" 
-                                                    />
-                                                    <label for="floatingInput">To</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className='row m-4'>
-                                            <h4>Time</h4>
-                                            <div className='col-md-6 col-sm-12'>
-                                                <div className="form-floating mb-3">
-                                                    <input 
-                                                        type="time" 
-                                                        className="form-control" 
-                                                        id="floatingInput" 
-                                                        onChange={(e)=> setTime(e.target.value)}
-                                                        placeholder="name@example.com" 
-                                                    />
-                                                    <label for="floatingInput">From</label>
-                                                </div>
-                                            </div>
-                                            <div className='col-md-6 col-sm-12'>
-                                                <div className="form-floating mb-3">
-                                                    <input 
-                                                        type="time" 
-                                                        className="form-control" 
-                                                        id="floatingInput" 
-                                                        onChange={(e)=> setTime_to(e.target.value)}
-                                                        placeholder="name@example.com" 
-                                                    />
-                                                    <label for="floatingInput">To</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </>
                                 : ''
                                 }
-                                <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                                    <Button
-                                        color="inherit"
-                                        disabled={activeStep === 0}
-                                        onClick={handleBack}
-                                        sx={{ mr: 1 }}
-                                    >
-                                        Back
-                                    </Button>
-                                    <Box sx={{ flex: '1 1 auto' }} />
-                                    {isStepOptional(activeStep) && (
-                                        <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-                                            Skip
+                                { testimonySuccess ? (
+                                    <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                                        <Button
+                                            color="inherit"
+                                            disabled={activeStep === 0}
+                                            onClick={handleBack}
+                                            sx={{ mr: 1 }}
+                                        >
+                                            Back
                                         </Button>
-                                    )}
+                                        <Box sx={{ flex: '1 1 auto' }} />
+                                        {isStepOptional(activeStep) && (
+                                            <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+                                                Skip
+                                            </Button>
+                                        )}
 
-                                    
-                                    {activeStep === steps.length - 1 ? 
-                                    <Button onClick={handleSubmitEvent}>Finish</Button>
-                                    : <Button onClick={handleNext}>Next</Button>}
-                                </Box>
+                                        {activeStep === steps.length - 1 ? 
+                                        <Button onClick={handleFlyerUpload} data-bs-dismiss="modal">Finish</Button>
+                                        : <Button onClick={handleNext}>Next</Button>}
+                                    </Box>
+                                ) : (
+                                    <></>
+                                )}
                             </>
                         )}
                     </Box>
-                        {/* <div className='row'>
-                            <div className='col-md-4 col-sm-12'>
-                                <div class="input-group mb-3">                                
-                                    <label class="input-group-text" for="inputGroupSelect01">Type of Event</label>
-                                    <select 
-                                        class="form-select" 
-                                        id="inputGroupSelect01"
-                                        aria-label=".form-select-lg example"
-                                        onChange={(e)=> setCategory(e.target.value)}
-                                    >
-                                        <option selected>Choose...</option>
-                                        <option value="3">Virtual</option>
-                                        <option value="1">Seminar</option>
-                                        <option value="2">Outreach</option>
-                                        <option value="4">Activities</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className='col-md-8 col-sm-12'>
-                                <div class="mb-3"> */}
-                                    {/* <label for="formFile" class="form-label">Upload flyer</label> */}
-                                    {/* <input 
-                                        class="form-control" 
-                                        type="file" 
-                                        id="formFile" 
-                                        onChange={(e)=> {setImgUrl(e.target.files[0]); setImgName(e.target.files[0].name)}}
-                                    />
-                                </div>
-                            </div>
-                        </div> */}
-                        {/* <div className='row'>
-                            <div className='col-md-4 col-sm-12'>
-                                <div className="form-floating mb-3">
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        id="floatingInput" 
-                                        onChange={(e)=> setFacebook(e.target.value)}
-                                        placeholder="name@example.com" 
-                                    />
-                                    <label for="floatingInput">Facebook</label>
-                                </div>
-                            </div>
-                            <div className='col-md-4 col-sm-12'>
-                                <div className="form-floating mb-3">
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        id="floatingInput" 
-                                        onChange={(e)=> setYouTube(e.target.value)}
-                                        placeholder="name@example.com" 
-                                    />
-                                    <label for="floatingInput">Youtube</label>
-                                </div>
-                            </div>
-                            <div className='col-md-4 col-sm-12'>
-                                <div className="form-floating mb-3">
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        onChange={(e)=> setSocials(e.target.value)}
-                                        id="floatingInput" 
-                                        placeholder="name@example.com" 
-                                    />
-                                    <label for="floatingInput">Other Socials</label>
-                                </div>
-                            </div>
-                        </div> */}
                     </div>
-                    {/* <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button 
-                            type="button" 
-                            className="btn btn-primary"
-                            data-bs-dismiss="modal"
-                            onClick={handleSubmitEvent}
-                        >Add event</button>
-                    </div> */}
                     </div>
                 </div>
             </div>

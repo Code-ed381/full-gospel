@@ -111,8 +111,7 @@ const Events = ()=> {
         const results = await supabase
         .from('events')
         .select(`*,
-            categories(name),
-            profile(*)     
+            categories(name)   
         `)
         .order('id', { ascending: false})
         setData(results.data)
@@ -126,8 +125,7 @@ const Events = ()=> {
             const results = await supabase
             .from('events')
             .select(`*,
-                categories(name),
-                profile(*)     
+                categories(name)    
             `)
             .order('id', { ascending: false})
             isMounted && setData(results.data)
@@ -139,7 +137,7 @@ const Events = ()=> {
             .select('*')
             .eq('user_id', auth?.id)
             isMounted && setProfile(results?.data[0])
-            console.log(results.data[0].id)
+            console.log(results.data)
         }
 
         getEvents()
@@ -287,13 +285,13 @@ const Events = ()=> {
                         {data?.map((data, i)=> 
                             <Grid item md={4} key={i} xs={12}>
                                 <Card>
-                                    <CardHeader
+                                    {/* <CardHeader
                                         avatar={
                                             <Avatar alt="Travis Howard" src={data?.profile?.avatar_url} />
                                         }
                                         title={data?.profile?.full_name}
                                         subheader={data?.profile?.chapter}
-                                    />
+                                    /> */}
                                     <CardMedia
                                         component="img"
                                         height="194"
