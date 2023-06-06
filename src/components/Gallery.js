@@ -14,6 +14,11 @@ import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
 
 const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
 const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmZnZqdXR3eGtzenV2bnNxYXljIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjIwMTMxMDUsImV4cCI6MTk3NzU4OTEwNX0.JryH2jtpXFt-dwHAEdMVH0ykYB3cRfHXS0DKiGM1Z8c'
@@ -185,28 +190,34 @@ const Gallery = ()=> {
                     <>
                         {data?.map((item, i) => (
                             <div className="col-md-3 col-xs-12" key={i}>
-                                <figure class="figure">
-                                    <img src={item?.posterUrl} class="figure-img img-fluid rounded" alt="image" />
-                                    <figcaption class="figure-caption">{item?.description}</figcaption>
-                                    <Button 
-                                        className='m-2' 
-                                        variant="outlined" 
-                                        size="small" 
-                                        startIcon={<VisibilityIcon />}
-                                        onClick={()=> window.location.href = item?.posterUrl}
-                                    >
-                                        View
-                                    </Button>
-                                    <Button 
-                                        variant="outlined" 
-                                        size="small" 
-                                        color="error" 
-                                        startIcon={<DeleteIcon />}
-                                        onClick={()=> handleDelete(item?.id)}
-                                    >
-                                        Delete
-                                    </Button>
-                                </figure>
+                                <Card sx={{ maxWidth: 345 }}>
+                                    <CardMedia
+                                        component="img"
+                                        alt="green iguana"
+                                        height="300"
+                                        image={item?.posterUrl}
+                                    />
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h5" component="div">
+                                            {item?.description}
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions>
+                                        <Button 
+                                            size="small" 
+                                            onClick={()=> window.location.href = item?.posterUrl}
+                                        >
+                                            View
+                                        </Button>
+                                        <Button 
+                                            size="small" 
+                                            color="error" 
+                                            onClick={()=> handleDelete(item?.id)}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </CardActions>
+                                </Card>
                             </div>
                         ))}
                     </>

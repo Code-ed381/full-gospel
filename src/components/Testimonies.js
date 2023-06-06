@@ -294,17 +294,14 @@ const Testimonies = ()=> {
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="card-title">{data?.title}</h5>
-                                        {/* <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> */}
-                                        {/* <p class="card-text">{data?.testimony}</p> */}
-                                        <a 
+                                        <Button
+                                            component='a'
                                             href={`#/admin/testimony/${data?.id}`} 
-                                            class="card-link"
-                                        >View more</a>
-                                        <button 
-                                            type="button" 
-                                            class="btn btn-link"
+                                        >View more</Button>
+                                        <Button 
+                                            color="error"
                                             onClick={()=> handleDelete(data?.id)}
-                                        >Delete</button>
+                                        >Delete</Button>
                                     </div>
                                 </div>
                             </Grid>
