@@ -3,8 +3,10 @@ import Index from "./components/Index";
 import Events from "./components/Events";
 import Gallery from "./components/Gallery";
 import News from "./components/News";
+import Podcasts from "./components/Podcasts";
 import Podcast from "./components/Podcast";
 import Testimonies from "./components/Testimonies";
+import Testimony from "./components/Testimony";
 import Event from "./components/Event";
 import Login from "./components/AuthPages/SignInSide";
 import SignUp from "./components/AuthPages/SignUp";
@@ -52,12 +54,20 @@ const App = createHashRouter([
                 element: <Events/>
               },
               {
-                path:'podcasts',
+                path:'podcast',
+                element: <Podcasts/>
+              },
+              {
+                path:'podcast/:id',
                 element: <Podcast/>
               },
               {
                 path:'testimonies',
                 element: <Testimonies/>
+              },
+              {
+                path:'testimony/:id',
+                element: <Testimony/>
               },
               {
                 path:'gallery',

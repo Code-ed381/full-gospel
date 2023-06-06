@@ -98,15 +98,13 @@ const Testimonies = ()=> {
 
     console.log(auth)
 
-    const getEvents = async ()=> {
+    const getTestimonies = async ()=> {
         const results = await supabase
-        .from('events')
-        .select(`*,
-            categories(name),
-            profile(*)     
-        `)
+        .from('testimonies')
+        .select(`*`)
         .order('id', { ascending: false})
         setData(results.data)
+        console.log(results.data)
     }
     
     useEffect(() => {
@@ -115,10 +113,8 @@ const Testimonies = ()=> {
 
         const getTestimonies = async ()=> {
             const results = await supabase
-            .from('testimonies_gallery')
-            .select(`*,
-                testimonies(*)
-            `)
+            .from('testimonies')
+            .select(`*`)
             .order('id', { ascending: false})
             isMounted && setData(results.data)
             console.log(results.data)
@@ -207,22 +203,21 @@ const Testimonies = ()=> {
         .then(async (willDelete) => {
             if (willDelete) {                            
                 const { data, error } = await supabase
-                .from('events')
+                .from('testimonies')
                 .delete()
                 .eq('id', event)
-
+              
                 if(error){
                     swal("Delete event failed!", {
                         icon: "error",
                     });
                 }
-                else {
-                    swal("Event has been deleted!", {
-                        icon: "success",
-                    });
+                getTestimonies()
+                
+                swal("Event has been deleted!", {
+                    icon: "success",
+                });
 
-                    getEvents()
-                }
             }
         });
     }
@@ -258,6 +253,7 @@ const Testimonies = ()=> {
                         button: "Done",
                         timer: 3000,
                     });
+                    getTestimonies()
                 }
             }
         }
@@ -296,12 +292,20 @@ const Testimonies = ()=> {
                         {data?.map((data, i)=> 
                             <Grid item md={3} key={i} xs={12}>
                                 <div class="card">
-                                <img src={data?.posterUrl} class="card-img-top" alt="..."/>
-                                <div class="card-body">
-                                    <h5 class="card-title">{data?.title}</h5>
-                                    <p class="card-text">{data?.testimony}</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                                </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">{data?.title}</h5>
+                                        {/* <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> */}
+                                        {/* <p class="card-text">{data?.testimony}</p> */}
+                                        <a 
+                                            href={`#/admin/testimony/${data?.id}`} 
+                                            class="card-link"
+                                        >View more</a>
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-link"
+                                            onClick={()=> handleDelete(data?.id)}
+                                        >Delete</button>
+                                    </div>
                                 </div>
                             </Grid>
                         )}
