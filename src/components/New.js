@@ -13,10 +13,10 @@ const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabase = createClient(PROJECT_URI, PROJECT_ANON)
 
-const Podcast = ()=> {
+const New = ()=> {
     const { id } = useParams();
     const [data, setData] = useState([]);
-    const [gallery, setGallery] = useState([]);
+    const [news, setNews] = useState([]);
 
 
     const navigate = useNavigate();
@@ -28,16 +28,16 @@ const Podcast = ()=> {
         const controller = new AbortController();
         var isMounted = true
 
-        const getPodcast = async ()=> {
+        const getNews = async ()=> {
             const results = await supabase
-            .from('podcast')
+            .from('news')
             .select(`* `)
             .eq('id', id)
             .order('id', { ascending: false})
             isMounted && setData(results.data[0])
             console.log(results.data)
         }
-        getPodcast()
+        getNews()
 
         return ()=> {
             isMounted = false
@@ -46,7 +46,7 @@ const Podcast = ()=> {
     }, [])
 
 
-    const handleDelete = async (podcast)=> {
+    const handleDelete = async (article)=> {
         swal({
             title: "Are you sure?",
             text: "Once deleted, you will not be able to recover this event!",
@@ -57,9 +57,9 @@ const Podcast = ()=> {
         .then(async (willDelete) => {
             if (willDelete) {                            
                 const { data, error } = await supabase
-                .from('podcast')
+                .from('news')
                 .delete()
-                .eq('id', podcast)
+                .eq('id', article)
               
                 if(error){
                     swal("Delete event failed!", {
@@ -82,33 +82,24 @@ const Podcast = ()=> {
         <>
             <div className="row">
                 <div className="col-md-6 col-xs-12">
-                    <img className="w-100" src={data?.posterURL} alt="podcast image"/>
-                </div>
-                <div className="col-md-6 col-xs-12">
                     <Card className='p-4'>
-                        <h1 class="display-6 mb-4"><strong>{data?.title}</strong></h1>
-                        <h5 class="text-muted">Date: {data?.date}</h5>
-                        <h5 class="text-muted">Time: {data?.time}</h5>
-                        <h5 class="text-muted">Podcast: {data?.podcastURL}</h5>
-                        <Button 
-                            variant="outlined" 
-                            onClick={()=> window.location.replace(data?.podcastURL)}
-                        >
-                            Go to podcast
-                        </Button>
-                        <Button 
-                            variant="outlined" 
+                        <Button  
                             color="error"
                             onClick={()=> handleDelete(data?.id)}
                             className='mx-2 my-3'
                         >
                             Delete
                         </Button>
+                        <h1 class="display-6 mb-4"><strong>{data?.headline}</strong></h1>
+                        <p class="text-muted">{data?.article}</p>
                     </Card>
+                </div>
+                <div className="col-md-6 col-xs-12">
+                    <img className="w-100" src={data?.posterUrl} alt="podcast image"/>
                 </div>
             </div>
         </>
     )
 }
 
-export default Podcast
+export default New

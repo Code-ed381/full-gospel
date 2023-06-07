@@ -194,7 +194,7 @@ const Gallery = ()=> {
                                     <CardMedia
                                         component="img"
                                         alt="green iguana"
-                                        height="300"
+                                        height="200"
                                         image={item?.posterUrl}
                                     />
                                     <CardContent>

@@ -3,6 +3,7 @@ import Index from "./components/Index";
 import Events from "./components/Events";
 import Gallery from "./components/Gallery";
 import News from "./components/News";
+import New from "./components/New";
 import Podcasts from "./components/Podcasts";
 import Podcast from "./components/Podcast";
 import Testimonies from "./components/Testimonies";
@@ -76,6 +77,10 @@ const App = createHashRouter([
               {
                 path:'news',
                 element: <News/>
+              },
+              {
+                path:'news/:id',
+                element: <New/>
               },
               {
                 path:'event/:event_name',
