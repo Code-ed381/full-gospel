@@ -57,14 +57,14 @@ function DashboardContent() {
               const results = await supabase
               .from('chapters')
               .select(`*`)
-              setEvents(results.data)
+              setChapters(results.data)
               console.log(results.data)
           }
           const getSponsors = async ()=> {
               const results = await supabase
               .from('sponsors')
               .select(`*`)
-              setEvents(results.data)
+              setSponsors(results.data)
               console.log(results.data)
           }
           const getNews = async ()=> {
