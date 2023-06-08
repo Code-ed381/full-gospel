@@ -3,8 +3,6 @@ import swal from 'sweetalert';
 import Card from '@mui/material/Card';
 import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
 import { useParams } from "react-router-dom";
 
 const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
@@ -16,12 +14,6 @@ const Testimony = ()=> {
     const { id } = useParams();
     const [data, setData] = useState([]);
     const [gallery, setGallery] = useState([]);
-
-
-    const navigate = useNavigate();
-    const { auth } = useAuth()
-
-    console.log(auth)
     
     useEffect(() => {
         const controller = new AbortController();
@@ -104,11 +96,11 @@ const Testimony = ()=> {
                         </div>
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src={gallery[0]?.posterUrl} className="m-2 w-100"/>
+                                <img src={gallery[0]?.posterUrl} className="m-2 w-100" alt='pic'/>
                             </div>
                             {gallery.map((image)=> 
                                 <div class="carousel-item ">
-                                    <img src={image?.posterUrl} className="m-2 w-100"/>
+                                    <img src={image?.posterUrl} className="m-2 w-100" alt='pic'/>
                                 </div>
                             )}   
                         </div>

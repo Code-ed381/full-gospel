@@ -27,8 +27,11 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="https://fullgospel.com/">
+        Full Gospel
+      </Link>{'-'}
+      <Link color="inherit" href="https://cyaneltechnologies.com/">
+        Powered by Cyanel Technologies
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -42,12 +45,38 @@ export default function SignInSide() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errMsg, setErrMsg] = useState('');
+  const [gallery, setGallery] = useState([])
   const { setAuth } = useAuth();
   const navigate = useNavigate();
 
+  let isMounted = false
+    
+  useEffect(() => {
+      const controller = new AbortController();
+
+      if(!isMounted) {
+          isMounted = true
+          const getGallery = async ()=> {
+              const results = await supabase
+              .from('gallery')
+              .select(`*`)
+              setGallery(results.data)
+              console.log(results.data)
+          }
+          getGallery();
+      }
+
+      return ()=> {
+          controller.abort();
+      }
+      
+  }, [])
+
+  const randomIndex = Math.floor(Math.random() * gallery?.length);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    
     const {
       data: { user },
       error,
@@ -79,7 +108,7 @@ export default function SignInSide() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: 'url(https://source.unsplash.com/random)',
+            backgroundImage: `url(${gallery[randomIndex]?.posterUrl})`,
             backgroundRepeat: 'no-repeat',
             backgroundColor: (t) =>
               t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
@@ -132,10 +161,10 @@ export default function SignInSide() {
                 id="password"
                 autoComplete="current-password"
               />
-              <FormControlLabel
+              {/* <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
-              />
+              /> */}
               <Button
                 fullWidth
                 variant="contained"
