@@ -197,8 +197,7 @@ const Events = ()=> {
                 speaker: speaker,
                 host: host,
                 speaker_bio: bio,
-                poster_url: imgURL,
-                profile_id: profile?.id
+                poster_url: imgURL
 
             },
         ])
