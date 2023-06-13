@@ -24,7 +24,6 @@ import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import LinearProgress from '@mui/material/LinearProgress';
 
 const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
 const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmZnZqdXR3eGtzenV2bnNxYXljIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjIwMTMxMDUsImV4cCI6MTk3NzU4OTEwNX0.JryH2jtpXFt-dwHAEdMVH0ykYB3cRfHXS0DKiGM1Z8c'
@@ -54,8 +53,6 @@ const Events = ()=> {
     const [profile, setProfile] = useState('');
     const [successMsg, setSuccessMsg] = useState('')
     const [errMsg, setErrMsg] = useState('')
-    const [deleteEvent, setDeleteEvent] = useState('');
-
     const [activeStep, setActiveStep] = React.useState(0);
     const [skipped, setSkipped] = React.useState(new Set());
 
@@ -105,8 +102,6 @@ const Events = ()=> {
     const navigate = useNavigate();
     const { auth } = useAuth()
 
-    console.log(auth)
-
     const getEvents = async ()=> {
         const results = await supabase
         .from('events')
@@ -129,7 +124,6 @@ const Events = ()=> {
             `)
             .order('id', { ascending: false})
             isMounted && setData(results.data)
-            console.log(results.data)
         }
         const getProfile = async ()=> {
             const results = await supabase
@@ -137,7 +131,6 @@ const Events = ()=> {
             .select('*')
             .eq('user_id', auth?.id)
             isMounted && setProfile(results?.data[0])
-            console.log(results.data)
         }
 
         getEvents()
@@ -159,7 +152,6 @@ const Events = ()=> {
         })
 
         if(error) {
-            console.log(error)
             setErrMsg('Error!! Flyer Failed to upload')
         }
         else {
@@ -169,16 +161,12 @@ const Events = ()=> {
             .getPublicUrl(imgName)
     
             setImgURL(data.publicUrl)
-            console.log(data.publicUrl)
             setSuccessMsg('Flyer uploaded successfully')
         }
     }
 
     const handleSubmitEvent = async (e) => {
       e.preventDefault();
-
-      console.log(img)
-      console.log(imgName)
 
       try {
         const { data, error } = await supabase
@@ -212,10 +200,13 @@ const Events = ()=> {
                 button: "Done",
                 timer: 3000,
             });
+            getEvents()
         }
-        console.log(data || error)
       } catch (error) {
-        console.error(error)
+        swal("Failed!", "Event could not be added", "error", {
+            button: "Ok!",
+            timer: 3000,
+        });
       } 
     };
 
@@ -249,10 +240,6 @@ const Events = ()=> {
             }
         });
     }
-
-    const handleExpandClick = () => {
-      setExpanded(!expanded);
-    };
 
     return(
         <>
@@ -605,7 +592,7 @@ const Events = ()=> {
 
                                     
                                     {activeStep === steps.length - 1 ? 
-                                    <Button onClick={handleSubmitEvent}>Finish</Button>
+                                    <Button data-bs-dismiss="modal" onClick={handleSubmitEvent}>Finish</Button>
                                     : <Button onClick={handleNext}>Next</Button>}
                                 </Box>
                             </>
