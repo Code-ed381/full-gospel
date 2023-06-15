@@ -9,6 +9,7 @@ import CollectionsIcon from '@mui/icons-material/Collections';
 import PodcastsRoundedIcon from '@mui/icons-material/PodcastsRounded';
 import { useEffect, useState } from "react";
 import { createClient } from '@supabase/supabase-js';
+// import useAuth from '../hooks/useAuth';
 
 const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
 const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmZnZqdXR3eGtzenV2bnNxYXljIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjIwMTMxMDUsImV4cCI6MTk3NzU4OTEwNX0.JryH2jtpXFt-dwHAEdMVH0ykYB3cRfHXS0DKiGM1Z8c'
@@ -33,6 +34,9 @@ function DashboardContent() {
   const [testimonies, setTestimonies] = useState([])
 
   let isMounted = false
+//   const {auth} = useAuth()
+
+//   console.log(auth)
     
   useEffect(() => {
       const controller = new AbortController();
@@ -44,7 +48,6 @@ function DashboardContent() {
               .from('profile')
               .select(`*`)
               setUsers(results.data)
-              console.log(results.data)
           }
           const getEvents = async ()=> {
             let { data: events, error } = await supabase
@@ -58,42 +61,36 @@ function DashboardContent() {
               .from('chapters')
               .select(`*`)
               setChapters(results.data)
-              console.log(results.data)
           }
           const getSponsors = async ()=> {
               const results = await supabase
               .from('sponsors')
               .select(`*`)
               setSponsors(results.data)
-              console.log(results.data)
           }
           const getNews = async ()=> {
               const results = await supabase
               .from('news')
               .select(`*`)
               setNews(results.data)
-              console.log(results.data)
           }
           const getPodcast = async ()=> {
               const results = await supabase
               .from('podcast')
               .select(`*`)
               setPodcast(results.data)
-              console.log(results.data)
           }
           const getTestimonies = async ()=> {
               const results = await supabase
               .from('testimonies')
               .select(`*`)
               setTestimonies(results.data)
-              console.log(results.data)
           }
           const getGallery = async ()=> {
               const results = await supabase
               .from('gallery')
               .select(`*`)
               setGallery(results.data)
-              console.log(results.data)
           }
           getEvents();
           getUsers();

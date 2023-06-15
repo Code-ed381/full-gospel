@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import swal from 'sweetalert';
 import SearchIcon from '@mui/icons-material/Search';
 import DirectionsIcon from '@mui/icons-material/Directions';
 
@@ -21,6 +21,13 @@ function Users() {
     const [data, setData] = useState([])
 
     let isMounted = false
+
+    const getUsers = async ()=> {
+        const results = await supabase
+        .from('profile')
+        .select(`*`)
+        setData(results.data)
+    }
     
     useEffect(() => {
         const controller = new AbortController();
@@ -31,8 +38,8 @@ function Users() {
                 const results = await supabase
                 .from('profile')
                 .select(`*`)
+                .order('id', { ascending: false})
                 setData(results.data)
-                console.log(results.data)
             }
             getUsers()
         }
@@ -42,6 +49,37 @@ function Users() {
             controller.abort();
         }
     }, [])
+
+    const handleDelete = async (profile)=> {
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this event!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then(async (willDelete) => {
+            if (willDelete) {                            
+                const { data, error } = await supabase
+                .from('profile')
+                .delete()
+                .eq('id', profile)
+
+                if(error){
+                    swal("Delete user failed!", {
+                        icon: "error",
+                    });
+                }
+                else {
+                    swal("User has been deleted!", {
+                        icon: "success",
+                    });
+
+                    getUsers()
+                }
+            }
+        });
+    }
 
     return (
         <>
@@ -87,7 +125,10 @@ function Users() {
                                         </div>
                                         <div className="card-footer text-muted">
                                             <Button size="small">Deactivate</Button>
-                                            <Button size="small" href="#text-buttons">Delete</Button>
+                                            <Button 
+                                                size="small" 
+                                                onClick={()=> handleDelete(data.id)}
+                                            >Delete</Button>
                                         </div>
                                     </div>
                                 </Paper>
