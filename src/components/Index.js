@@ -198,7 +198,7 @@ const Layout = () => {
                             <MenuItem onClick={()=> {handleCloseUserMenu();navigate('profile')}}>
                             <Typography textAlign="center">Profile</Typography>
                             </MenuItem>
-                            <MenuItem onClick={handleCloseUserMenu} component="a" href="#/admin-register">
+                            <MenuItem onClick={handleCloseUserMenu} component="a" href="#/register">
                             <Typography textAlign="center">Register</Typography>
                             </MenuItem>
                             <MenuItem onClick={logout}>

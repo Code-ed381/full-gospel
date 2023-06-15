@@ -179,11 +179,11 @@ export default function SignInSide() {
                     Forgot password?
                   </Link>
                 </Grid>
-                <Grid item>
+                {/* <Grid item>
                   <Link href="#/register" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
-                </Grid>
+                </Grid> */}
               </Grid>
               <Copyright sx={{ mt: 5 }} />
             </Box>
