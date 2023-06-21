@@ -171,7 +171,7 @@ const Events = ()=> {
       try {
         const { data, error } = await supabase
         .from('events')
-        .insert([
+        .insert([ 
             { 
                 categories_id: category,
                 name: name, 

@@ -59,6 +59,27 @@ const Event = ()=> {
         return formattedDate
     };
 
+    // const timeTo12HrFormat = (time) => {
+    //     // Split the time string into an array of hours, minutes, and seconds.
+    //     const timeParts = time.split(":");
+      
+    //     // Initialize the AM/PM string.
+    //     let ampm = "AM";
+      
+    //     // If the hour is greater than or equal to 12, set the AM/PM string to PM.
+    //     if (timeParts[0] >= 12) {
+    //       ampm = "PM";
+    //     }
+      
+    //     // If the hour is greater than 12, subtract 12 from it.
+    //     if (timeParts[0] > 12) {
+    //       timeParts[0] -= 12;
+    //     }
+      
+    //     // Format the time string and return it.
+    //     return `${timeParts[0]}:${timeParts[1]}:${timeParts[2]} ${ampm}`;
+    //   };
+
     
     return(
         <Container maxWidth="lg" style={{marginTop: '30px'}}>
@@ -103,10 +124,10 @@ const Event = ()=> {
                                     <div class="fw-bold">Date</div>
                                         {data?.date_to ? (
                                             <>
-                                                {data?.date} - {data?.date_to}
+                                                {formattedDate(data?.date)} - {formattedDate(data?.date_to)}
                                             </>
                                         ) : (
-                                            <>{data?.date}</>
+                                            <>{formattedDate(data?.date)}</>
                                         )}
                                     </div>
                                 </li>
@@ -115,7 +136,7 @@ const Event = ()=> {
                                     <div class="fw-bold">Time</div>
                                         {data?.time_to ? (
                                             <>
-                                                {data?.time} - {data?.time_to}
+                                                {timeTo12HrFormat(data?.time)} - {data?.time_to}
                                             </>
                                         ) : (
                                             <>{data?.time}</>
@@ -128,7 +149,7 @@ const Event = ()=> {
                     </div>
                     <div className="row">
                         <Box className="mt-3" style={{backgroundColor: 'white'}}>
-                            { participants[0] ? (
+                            { participants !== null ? (
                                 <div className="table-responsive-md">
                                 <table class="table table-striped table-sm caption-top">
                                     <caption>List of participants</caption>
