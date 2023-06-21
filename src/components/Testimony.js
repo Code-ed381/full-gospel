@@ -32,7 +32,7 @@ const Testimony = ()=> {
             const results = await supabase
             .from('testimonies_gallery')
             .select(`*`)
-            .eq('testimony', id)
+            .eq('testimony_id', id)
             .order('id', { ascending: false})
             isMounted && setGallery(results.data)
             console.log(results.data)
