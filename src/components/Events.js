@@ -291,28 +291,34 @@ const Events = ()=> {
 
     return(
         <>
-            <Paper
-                component="form"
-                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', m: '12px 0' }}
-            >
-                <InputBase
-                    sx={{ ml: 1, flex: 1 }}
-                    placeholder="Search Events"
-                    inputProps={{ 'aria-label': 'search events' }}
-                    onChange={(e)=> setSearch(e.target.value)}
-                />
-                <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-                    <SearchIcon />
-                </IconButton>
-                <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-            </Paper>
+            <div class="d-flex bd-highlight mb-3">
+                <div class="me-auto p-2 bd-highlight">
+                    <Button 
+                        variant="contained" 
+                        sx={{ mb: '12px' }}
+                        data-bs-toggle="modal" 
+                        data-bs-target="#addEventModal"
+                    >Add event</Button>
+                </div>
+                <div class="p-2 bd-highlight">
+                    <Paper
+                        component="form"
+                        sx={{display: 'flex', alignItems: 'center'}}
+                    >
+                        <InputBase
+                            sx={{ ml: 1, flex: 1 }}
+                            placeholder="Search Events"
+                            inputProps={{ 'aria-label': 'search events' }}
+                            onChange={(e)=> setSearch(e.target.value)}
+                        />
+                        <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+                            <SearchIcon />
+                        </IconButton>
+                        <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+                    </Paper>
+                </div>
+            </div>
 
-            <Button 
-                variant="contained" 
-                sx={{ mb: '12px' }}
-                data-bs-toggle="modal" 
-                data-bs-target="#addEventModal"
-            >Add event</Button>
 
             <Grid container spacing={2}>
                 {filteredData ? (
