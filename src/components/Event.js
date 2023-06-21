@@ -136,7 +136,7 @@ const Event = ()=> {
                                     <div class="fw-bold">Time</div>
                                         {data?.time_to ? (
                                             <>
-                                                {timeTo12HrFormat(data?.time)} - {data?.time_to}
+                                                {data?.time} - {data?.time_to}
                                             </>
                                         ) : (
                                             <>{data?.time}</>
