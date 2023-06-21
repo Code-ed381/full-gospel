@@ -19,6 +19,9 @@ const supabase = createClient(PROJECT_URI, PROJECT_ANON)
 
 function Users() {
     const [data, setData] = useState([])
+    const [search, setSearch] = useState('')
+    const [filteredData, setFilteredData] = useState([])
+
 
     let isMounted = false
 
@@ -49,6 +52,33 @@ function Users() {
             controller.abort();
         }
     }, [])
+
+    useEffect(() => {
+        const filterData = () => {
+          if (search === '') {
+            setFilteredData(data); // If no input, use the main array
+          } else {
+            const filteredArray = data.filter((item) => {
+              // Get an array of all values in the item object
+              const values = Object.values(item);
+      
+              // Check if any value includes the search term
+              const found = values.some((value) => {
+                if (typeof value === 'string') {
+                  return value.toLowerCase().includes(search.toLowerCase());
+                }
+                return false;
+              });
+      
+              return found;
+            });
+      
+            setFilteredData(filteredArray);
+          }
+        };
+      
+        filterData();
+    }, [data, search]);
 
     const handleDelete = async (profile)=> {
         swal({
@@ -91,6 +121,7 @@ function Users() {
                     sx={{ ml: 1, flex: 1 }}
                     placeholder="Search User"
                     inputProps={{ 'aria-label': 'search user' }}
+                    onChange={(e)=> setSearch(e.target.value)}
                 />
                 <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
                     <SearchIcon />
@@ -98,7 +129,44 @@ function Users() {
                 <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
             </Paper>
             <Grid container spacing={2}>
-                {data ? (
+                {filteredData ? 
+                    <>
+                        {filteredData?.map((data)=>
+                            <Grid item md={3} xs={12}>
+                                <Paper>
+                                    <div className="card text-center">
+                                        <div className="card-header">
+                                            <center>
+                                            <Avatar
+                                                alt="Remy Sharp"
+                                                src={data?.avatar_url}
+                                                sx={{ width: 56, height: 56 }}
+                                            />
+                                            </center>
+                                        </div>
+                                        <div className="card-body">
+                                            <ul className="list-group list-group-flush">
+                                                <li className="list-group-item"><h5>{data?.full_name}</h5></li>
+                                                <li className="list-group-item">{data?.email}</li>
+                                                {data?.phone ? <li className="list-group-item">{data?.phone}</li> : <li className="list-group-item"><mark><var>No phone number</var></mark></li>}
+                                                
+                                                <li className="list-group-item">{data?.chapter}</li>
+                                                <li className="list-group-item">{data?.nationality}</li>
+                                            </ul>
+                                        </div>
+                                        <div className="card-footer text-muted">
+                                            <Button size="small">Deactivate</Button>
+                                            <Button 
+                                                size="small" 
+                                                onClick={()=> handleDelete(data.id)}
+                                            >Delete</Button>
+                                        </div>
+                                    </div>
+                                </Paper>
+                            </Grid>
+                        )}
+                    </>
+                : data ? (
                     <>
                         {data?.map((data)=>
                             <Grid item md={3} xs={12}>

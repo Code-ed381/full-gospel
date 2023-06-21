@@ -96,11 +96,11 @@ const Testimony = ()=> {
                         </div>
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src={gallery[0]?.posterUrl} className="m-2 w-100" alt='pic'/>
+                                <img src={gallery[0]?.posterUrl} className="m-2 w-100" alt='No image found'/>
                             </div>
                             {gallery.map((image)=> 
                                 <div class="carousel-item ">
-                                    <img src={image?.posterUrl} className="m-2 w-100" alt='pic'/>
+                                    <img src={image?.posterUrl} className="m-2 w-100" alt='No image found'/>
                                 </div>
                             )}   
                         </div>

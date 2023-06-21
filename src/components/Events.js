@@ -2,12 +2,13 @@ import * as React from 'react';
 import swal from 'sweetalert';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
+import TelegramIcon from '@mui/icons-material/Telegram';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
+import Tooltip from '@mui/material/Tooltip';
+import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Stepper from '@mui/material/Stepper';
@@ -24,6 +25,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import {CardActionArea} from '@mui/material';
 
 const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
 const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmZnZqdXR3eGtzenV2bnNxYXljIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjIwMTMxMDUsImV4cCI6MTk3NzU4OTEwNX0.JryH2jtpXFt-dwHAEdMVH0ykYB3cRfHXS0DKiGM1Z8c'
@@ -33,8 +35,9 @@ const supabase = createClient(PROJECT_URI, PROJECT_ANON)
 const steps = ['Add poster', 'Event description', 'Date and time'];
 
 const Events = ()=> {
-    const [expanded, setExpanded] = React.useState(false);
+    const [search, setSearch] = useState('');
     const [data, setData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
     const [name, setName] = useState('');
     const [host, setHost] = useState('');
     const [speaker, setSpeaker] = useState('');
@@ -141,6 +144,51 @@ const Events = ()=> {
             controller.abort();
         }
     }, [])
+
+    useEffect(() => {
+        const filterData = () => {
+          if (search === '') {
+            setFilteredData(data); // If no input, use the main array
+          } else {
+            const filteredArray = data.filter((item) => {
+              // Get an array of all values in the item object
+              const values = Object.values(item);
+      
+              // Check if any value includes the search term
+              const found = values.some((value) => {
+                if (typeof value === 'string') {
+                  return value.toLowerCase().includes(search.toLowerCase());
+                }
+                return false;
+              });
+      
+              return found;
+            });
+      
+            setFilteredData(filteredArray);
+          }
+        };
+      
+        filterData();
+    }, [data, search]);
+      
+
+    // useEffect(() => {
+    //     const filterData = () => {
+    //       if (search === '') {
+    //         setFilteredData(data); // If no input, use the main array
+    //       } else {
+    //         const filteredArray = data.filter((item) => {
+    //           // Implement your filter logic here
+    //           // For example, check if the item's name includes the search term
+    //           return item.name.toLowerCase().includes(search.toLowerCase());
+    //         });
+    //         setFilteredData(filteredArray);
+    //       }
+    //     };
+      
+    //     filterData();
+    //   }, [data, search]);
 
     const handleFlyerUpload = async ()=> {
         const { error } = await supabase
@@ -251,6 +299,7 @@ const Events = ()=> {
                     sx={{ ml: 1, flex: 1 }}
                     placeholder="Search Events"
                     inputProps={{ 'aria-label': 'search events' }}
+                    onChange={(e)=> setSearch(e.target.value)}
                 />
                 <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
                     <SearchIcon />
@@ -266,66 +315,50 @@ const Events = ()=> {
             >Add event</Button>
 
             <Grid container spacing={2}>
-                {data ? (
-                    <>
-                        {data?.map((data, i)=> 
-                            <Grid item md={4} key={i} xs={12}>
-                                <Card>
-                                    {/* <CardHeader
-                                        avatar={
-                                            <Avatar alt="Travis Howard" src={data?.profile?.avatar_url} />
-                                        }
-                                        title={data?.profile?.full_name}
-                                        subheader={data?.profile?.chapter}
-                                    /> */}
-                                    <CardMedia
-                                        component="img"
-                                        height="194"
-                                        image={data?.poster_url}
-                                        alt="event image"
-                                    />
-                                    <CardContent>
-                                        <Typography noWrap variant="subtitle1" color="text.secondary">
-                                        {data?.name}
-                                        </Typography>
-                                        <ol className="list-group list-group-flush">
-                                            <li className="list-group-item d-flex justify-content-between align-items-start">
-                                                <div className="ms-2 me-auto">
-                                                <div className="fw-bold">Host</div>
-                                                {data?.host}
-                                                </div>
-                                            </li>
-                                            <li className="list-group-item d-flex justify-content-between align-items-start">
-                                                <div className="ms-2 me-auto text-truncate">
-                                                <div className="fw-bold">Speaker</div>
-                                                {data?.speaker}
-                                                </div>
-                                            </li>
-                                            <li className="list-group-item d-flex justify-content-between align-items-start">
-                                                <div className="ms-2 me-auto">
-                                                <div className="fw-bold">Chapter</div>
-                                                    {data?.chapter}
-                                                </div>
-                                            </li>
-                                        </ol>
-                                    </CardContent>
-                                    <CardActions>
-                                        <Button size="small">Share</Button>
-                                        <Button 
-                                            size="small"
-                                            component='a'
-                                            href={`#/admin/event/${data?.id}`}
-                                        >View Details</Button>
-                                        <Button 
-                                            size="small" 
-                                            onClick={()=> handleDelete(data?.id)}
-                                        >Delete</Button>
-                                        {data?.poster_url ? '' : <Button size="small">Add Poster</Button>}
-                                    </CardActions>
-                                </Card>
-                            </Grid>
-                        )}
-                    </>
+                {filteredData ? (
+                    <> {filteredData?.map((data, i)=> 
+                        <Grid item md={3} key={i} xs={12}>
+                            <Card sx={{ maxWidth: 345 }}>
+                            <CardActionArea component="a" href={`#/admin/event/${data?.id}`}>
+                                <CardMedia
+                                component="img"
+                                height="140"
+                                image={data.poster_url}
+                                alt="green iguana"
+                                />
+                                <CardContent>
+                                <Typography gutterBottom variant="h5" component="div">
+                                    {data.host}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    {data?.name}
+                                </Typography>
+                                </CardContent>
+                            </CardActionArea>
+                            <CardActions>
+                                {/* <Button 
+                                    size="small" 
+                                    color="primary"
+                                    variant="outlined" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#exampleModal"
+                                    startIcon={<TelegramIcon />}
+                                >
+                                Share
+                                </Button> */}
+                                <Button 
+                                    size="small" 
+                                    color="error"
+                                    variant="contained" 
+                                    onClick={()=> handleDelete(data?.id)}
+                                    startIcon={<DeleteIcon />}
+                                >
+                                Delete
+                                </Button>
+                            </CardActions>
+                            </Card>
+                        </Grid>
+                    )} </>
                 ) : (
                     <h4>
                         No Events Found
