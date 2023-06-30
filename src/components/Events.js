@@ -52,7 +52,7 @@ const Events = ()=> {
     const [img, setImg] = useState();
     const [imgName, setImgName] = useState('');
     const [imgURL, setImgURL] = useState('');
-    const [phone, setPhone] = useState();
+    const [phone, setPhone] = useState('');
     const [profile, setProfile] = useState('');
     const [successMsg, setSuccessMsg] = useState('')
     const [errMsg, setErrMsg] = useState('')
@@ -330,7 +330,7 @@ const Events = ()=> {
                                 component="img"
                                 height="140"
                                 image={data.poster_url}
-                                alt="green iguana"
+                                alt="image"
                                 />
                                 <CardContent>
                                 <Typography gutterBottom variant="h5" component="div">
@@ -543,7 +543,7 @@ const Events = ()=> {
                                             <div className='col-md-6 col-sm-12'>
                                                 <div className="form-floating mb-3">
                                                     <input 
-                                                        type="number" 
+                                                        type="text" 
                                                         className="form-control" 
                                                         id="floatingInput" 
                                                         onChange={(e)=> setPhone(e.target.value)}

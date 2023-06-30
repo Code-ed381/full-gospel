@@ -29,6 +29,8 @@ const supabase = createClient(PROJECT_URI, PROJECT_ANON)
 const steps = ['Testimony', 'Add posters' ];
 
 const Testimonies = ()=> {
+    const [search, setSearch] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
     const [expanded, setExpanded] = React.useState(false);
     const [data, setData] = useState([]);
     const [testimony, setTestimony] = useState('');
@@ -127,6 +129,33 @@ const Testimonies = ()=> {
             controller.abort();
         }
     }, [])
+
+    useEffect(() => {
+        const filterData = () => {
+          if (search === '') {
+            setFilteredData(data); // If no input, use the main array
+          } else {
+            const filteredArray = data.filter((item) => {
+              // Get an array of all values in the item object
+              const values = Object.values(item);
+      
+              // Check if any value includes the search term
+              const found = values.some((value) => {
+                if (typeof value === 'string') {
+                  return value.toLowerCase().includes(search.toLowerCase());
+                }
+                return false;
+              });
+      
+              return found;
+            });
+      
+            setFilteredData(filteredArray);
+          }
+        };
+      
+        filterData();
+    }, [data, search]);
 
     const handleFlyerUpload = async ()=> {
         const files = Array.from(img).map((file)=> supabase
@@ -264,7 +293,7 @@ const Testimonies = ()=> {
 
     return(
         <>
-            <Paper
+            {/* <Paper
                 component="form"
                 sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', m: '12px 0' }}
             >
@@ -284,12 +313,41 @@ const Testimonies = ()=> {
                 sx={{ mb: '12px' }}
                 data-bs-toggle="modal" 
                 data-bs-target="#addEventModal"
-            >Add testimony</Button>
+            >Add testimony</Button> */}
+
+            <div class="d-flex bd-highlight mb-3">
+                <div class="me-auto p-2 bd-highlight">
+                <Button 
+                    variant="contained" 
+                    sx={{ mb: '12px' }}
+                    data-bs-toggle="modal" 
+                    data-bs-target="#addEventModal"
+                >Add testimony
+                </Button>
+                </div>
+                <div class="p-2 bd-highlight">
+                    <Paper
+                        component="form"
+                        sx={{display: 'flex', alignItems: 'center'}}
+                    >
+                        <InputBase
+                            sx={{ ml: 1, flex: 1 }}
+                            placeholder="Search Testimonies"
+                            inputProps={{ 'aria-label': 'search testimonies' }}
+                            onChange={(e)=> setSearch(e.target.value)}
+                        />
+                        <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+                            <SearchIcon />
+                        </IconButton>
+                        <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+                    </Paper>
+                </div>
+            </div>
 
             <Grid container spacing={2}>
-                {data ? (
+                {filteredData ? (
                     <>
-                        {data?.map((data, i)=> 
+                        {filteredData?.map((data, i)=> 
                             <Grid item md={3} key={i} xs={12}>
                                 <div class="card">
                                     <div class="card-body">

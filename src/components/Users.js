@@ -128,6 +128,7 @@ function Users() {
                 </IconButton>
                 <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
             </Paper>
+            
             <Grid container spacing={2}>
                 {filteredData ? 
                     <>

@@ -139,7 +139,7 @@ const Layout = () => {
 
   return (
     <ThemeProvider theme={mdTheme}>
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex', height: '100vh', width: '100vw' }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
           <Toolbar
