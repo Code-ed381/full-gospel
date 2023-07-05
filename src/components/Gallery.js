@@ -18,6 +18,7 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
+import CardActionArea from '@mui/material/CardActionArea';
 import Typography from '@mui/material/Typography';
 
 const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
@@ -28,7 +29,9 @@ const supabase = createClient(PROJECT_URI, PROJECT_ANON)
 const steps = ['Add poster', 'Event description', 'Date and time'];
 
 const Gallery = ()=> {
+    const [search, setSearch] = useState('');
     const [data, setData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
     const [comment, setComment] = useState('');
     const [img, setImg] = useState();
     const [imgName, setImgName] = useState('');
@@ -48,6 +51,33 @@ const Gallery = ()=> {
         .order('id', { ascending: false})
         setData(results.data)
     }
+
+    useEffect(() => {
+        const filterData = () => {
+          if (search === '') {
+            setFilteredData(data); // If no input, use the main array
+          } else {
+            const filteredArray = data.filter((item) => {
+              // Get an array of all values in the item object
+              const values = Object.values(item);
+      
+              // Check if any value includes the search term
+              const found = values.some((value) => {
+                if (typeof value === 'string') {
+                  return value.toLowerCase().includes(search.toLowerCase());
+                }
+                return false;
+              });
+      
+              return found;
+            });
+      
+            setFilteredData(filteredArray);
+          }
+        };
+      
+        filterData();
+    }, [data, search]);
     
     useEffect(() => {
         const controller = new AbortController();
@@ -163,42 +193,49 @@ const Gallery = ()=> {
 
     return(
         <>
-            <Paper
-                component="form"
-                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', m: '12px 0' }}
-            >
-                <InputBase
-                    sx={{ ml: 1, flex: 1 }}
-                    placeholder="Search Gallery"
-                    inputProps={{ 'aria-label': 'search events' }}
-                />
-                <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-                    <SearchIcon />
-                </IconButton>
-                <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-            </Paper>
+            <div class="d-flex bd-highlight mb-2">
+                <div class="me-auto p-2 bd-highlight">
+                    <Button 
+                        variant="contained" 
+                        sx={{ mb: '12px' }}
+                        data-bs-toggle="modal" 
+                        data-bs-target="#addEventModal"
+                    >Add new image</Button>
+                </div>
+                <div class="p-2 bd-highlight">
+                    <Paper
+                        component="form"
+                        sx={{display: 'flex', alignItems: 'center'}}
+                    >
+                        <InputBase
+                            sx={{ ml: 1, flex: 1 }}
+                            placeholder="Search Gallery"
+                            inputProps={{ 'aria-label': 'search gallery' }}
+                            onChange={(e)=> setSearch(e.target.value)}
+                        />
+                        <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+                            <SearchIcon />
+                        </IconButton>
+                        <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+                    </Paper>
+                </div>
+            </div>
 
-            <Button 
-                variant="contained" 
-                sx={{ mb: '12px' }}
-                data-bs-toggle="modal" 
-                data-bs-target="#addEventModal"
-            >Add new image</Button>
+
 
             <div className='row' spacing={1}>
-                {data ? (
+                {filteredData ? (
                     <>
-                        {data?.map((item, i) => (
+                        {filteredData?.map((item, i) => (
                             <div className="col-md-3 col-xs-12" key={i}>
-                                <Card sx={{ maxWidth: 345 }}>
+                                {/* <Card sx={{ maxWidth: 345 }}>
                                     <CardMedia
                                         component="img"
                                         alt="green iguana"
-                                        height="200"
                                         image={item?.posterUrl}
                                     />
                                     <CardContent>
-                                        <Typography gutterBottom variant="h5" component="div">
+                                        <Typography gutterBottom variant="body2" component="div">
                                             {item?.description}
                                         </Typography>
                                     </CardContent>
@@ -213,6 +250,36 @@ const Gallery = ()=> {
                                             size="small" 
                                             color="error" 
                                             onClick={()=> handleDelete(item?.id)}
+                                            endIcon={<DeleteIcon />}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </CardActions>
+                                </Card> */}
+                                <Card sx={{ maxWidth: 345 }}>
+                                    <CardActionArea onClick={()=> window.location.href = item?.posterUrl}>
+                                        <CardMedia
+                                        component="img"
+                                        height="140"
+                                        image={item?.posterUrl}
+                                        alt="image"
+                                        />
+                                        <CardContent>
+                                        {/* <Typography gutterBottom variant="h5" component="div">
+                                            Lizard
+                                        </Typography> */}
+                                        <Typography variant="body2" color="text.secondary">
+                                            {item?.description}
+                                        </Typography>
+                                        </CardContent>
+                                    </CardActionArea>
+                                    <CardActions>
+                                    <Button 
+                                            size="small" 
+                                            color="error"
+                                            variant='contained' 
+                                            onClick={()=> handleDelete(item?.id)}
+                                            endIcon={<DeleteIcon />}
                                         >
                                             Delete
                                         </Button>

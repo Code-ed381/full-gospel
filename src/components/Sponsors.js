@@ -52,7 +52,7 @@ function Sponsors() {
         <>
             <Paper
                 component="form"
-                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', mb: '12px' }}
+                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', mb: '12px', width: '30%' }}
             >
                 <InputBase
                     sx={{ ml: 1, flex: 1 }}

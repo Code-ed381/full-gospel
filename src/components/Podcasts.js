@@ -28,7 +28,8 @@ const supabase = createClient(PROJECT_URI, PROJECT_ANON)
 const steps = ['Add poster', 'Event description', 'Date and time'];
 
 const Podcasts = ()=> {
-    const [expanded, setExpanded] = React.useState(false);
+    const [search, setSearch] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
     const [data, setData] = useState([]);
     const [podcastURL, setPodcastURL] = useState('');
     const [title, setTitle] = useState('');
@@ -73,6 +74,33 @@ const Podcasts = ()=> {
             controller.abort();
         }
     }, [])
+
+    useEffect(() => {
+        const filterData = () => {
+          if (search === '') {
+            setFilteredData(data); // If no input, use the main array
+          } else {
+            const filteredArray = data.filter((item) => {
+              // Get an array of all values in the item object
+              const values = Object.values(item);
+      
+              // Check if any value includes the search term
+              const found = values.some((value) => {
+                if (typeof value === 'string') {
+                  return value.toLowerCase().includes(search.toLowerCase());
+                }
+                return false;
+              });
+      
+              return found;
+            });
+      
+            setFilteredData(filteredArray);
+          }
+        };
+      
+        filterData();
+    }, [data, search]);
 
     const handleSubmit = async ()=> {
         const { error } = await supabase
@@ -173,7 +201,35 @@ const Podcasts = ()=> {
 
     return(
         <>
-            <Paper
+        
+        <div class="d-flex bd-highlight mb-3">
+                <div class="me-auto p-2 bd-highlight">
+                <Button 
+                    variant="contained" 
+                    sx={{ mb: '12px' }}
+                    data-bs-toggle="modal" 
+                    data-bs-target="#addEventModal"
+                >Add podcast</Button>
+                </div>
+                <div class="p-2 bd-highlight">
+                    <Paper
+                        component="form"
+                        sx={{display: 'flex', alignItems: 'center'}}
+                    >
+                        <InputBase
+                            sx={{ ml: 1, flex: 1 }}
+                            placeholder="Search Podcast"
+                            inputProps={{ 'aria-label': 'search podcast' }}
+                            onChange={(e)=> setSearch(e.target.value)}
+                        />
+                        <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+                            <SearchIcon />
+                        </IconButton>
+                        <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+                    </Paper>
+                </div>
+            </div>
+            {/* <Paper
                 component="form"
                 sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', m: '12px 0' }}
             >
@@ -186,14 +242,9 @@ const Podcasts = ()=> {
                     <SearchIcon />
                 </IconButton>
                 <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-            </Paper>
+            </Paper> */}
 
-            <Button 
-                variant="contained" 
-                sx={{ mb: '12px' }}
-                data-bs-toggle="modal" 
-                data-bs-target="#addEventModal"
-            >Add podcast</Button>
+            
 
             <Grid container spacing={2}>
                 {data ? (

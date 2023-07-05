@@ -7,14 +7,9 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
+import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
@@ -24,7 +19,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import LinearProgress from '@mui/material/LinearProgress';
+import CardActionArea from '@mui/material/CardActionArea';
 
 const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
 const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmZnZqdXR3eGtzenV2bnNxYXljIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjIwMTMxMDUsImV4cCI6MTk3NzU4OTEwNX0.JryH2jtpXFt-dwHAEdMVH0ykYB3cRfHXS0DKiGM1Z8c'
@@ -34,18 +29,45 @@ const supabase = createClient(PROJECT_URI, PROJECT_ANON)
 const steps = ['Add poster', 'Event description', 'Date and time'];
 
 const News = ()=> {
+    const [search, setSearch] = useState('');
     const [data, setData] = useState([]);
     const [headline, setHeadline] = useState('');
     const [article, setArticle] = useState('')
     const [img, setImg] = useState();
     const [imgName, setImgName] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
     const [imgURL, setImgURL] = useState('');
     const [successMsg, setSuccessMsg] = useState('')
 
     const navigate = useNavigate();
     const { auth } = useAuth()
 
-    console.log(auth)
+    useEffect(() => {
+        const filterData = () => {
+          if (search === '') {
+            setFilteredData(data); // If no input, use the main array
+          } else {
+            const filteredArray = data.filter((item) => {
+              // Get an array of all values in the item object
+              const values = Object.values(item);
+      
+              // Check if any value includes the search term
+              const found = values.some((value) => {
+                if (typeof value === 'string') {
+                  return value.toLowerCase().includes(search.toLowerCase());
+                }
+                return false;
+              });
+      
+              return found;
+            });
+      
+            setFilteredData(filteredArray);
+          }
+        };
+      
+        filterData();
+    }, [data, search]);
 
     const getNews = async ()=> {
         let { data: news, error } = await supabase
@@ -168,7 +190,35 @@ const News = ()=> {
 
     return(
         <>
-            <Paper
+            <div class="d-flex bd-highlight mb-2">
+                <div class="me-auto p-2 bd-highlight">
+                    <Button 
+                        variant="contained" 
+                        sx={{ mb: '12px' }}
+                        data-bs-toggle="modal" 
+                        data-bs-target="#addEventModal"
+                    >Add news</Button>
+                </div>
+                <div class="p-2 bd-highlight">
+                    <Paper
+                        component="form"
+                        sx={{display: 'flex', alignItems: 'center'}}
+                    >
+                        <InputBase
+                            sx={{ ml: 1, flex: 1 }}
+                            placeholder="Search News"
+                            inputProps={{ 'aria-label': 'search news' }}
+                            onChange={(e)=> setSearch(e.target.value)}
+                        />
+                        <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+                            <SearchIcon />
+                        </IconButton>
+                        <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+                    </Paper>
+                </div>
+            </div>
+
+            {/* <Paper
                 component="form"
                 sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', m: '12px 0' }}
             >
@@ -188,14 +238,14 @@ const News = ()=> {
                 sx={{ mb: '12px' }}
                 data-bs-toggle="modal" 
                 data-bs-target="#addEventModal"
-            >Add news</Button>
+            >Add news</Button> */}
 
             <Grid container spacing={2}>
-                {data ? (
+                {filteredData ? (
                     <>
-                        {data?.map((data, i)=> 
+                        {filteredData?.map((data, i)=> 
                             <Grid item md={3} key={i} xs={12}>
-                            <Card sx={{ maxWidth: 345 }}>
+                            {/* <Card sx={{ maxWidth: 345 }}>
                                 <CardMedia
                                     component="img"
                                     alt="green iguana"
@@ -219,7 +269,36 @@ const News = ()=> {
                                         onClick={() => handleDelete(data?.id)}
                                     >Delete</Button>
                                 </CardActions>
-                            </Card>
+                            </Card> */}
+                            <Card sx={{ maxWidth: 345 }}>
+                                    <CardActionArea component='a' href={`#/admin/news/${data?.id}`} >
+                                        <CardMedia
+                                        component="img"
+                                        height="140"
+                                        image={data?.posterUrl}
+                                        alt="image"
+                                        />
+                                        <CardContent>
+                                        <Typography gutterBottom variant="h5" component="div">
+                                            {data?.headline}
+                                        </Typography>
+                                        {/* <Typography variant="body2" color="text.secondary">
+                                            {data?.description}
+                                        </Typography> */}
+                                        </CardContent>
+                                    </CardActionArea>
+                                    <CardActions>
+                                    <Button 
+                                            size="small" 
+                                            color="error"
+                                            variant='contained' 
+                                            onClick={()=> handleDelete(data?.id)}
+                                            endIcon={<DeleteIcon />}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </CardActions>
+                                </Card>
                         </Grid>
                         )}
                     </>

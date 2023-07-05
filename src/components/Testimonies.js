@@ -268,7 +268,7 @@ const Testimonies = ()=> {
                   .from('testimonies_gallery')
                   .insert([
                     {
-                        testimony: testimonyId,
+                        testimony_id: testimonyId,
                         posterUrl: values.data.publicUrl
                     }
                   ]);

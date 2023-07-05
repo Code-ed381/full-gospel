@@ -52,11 +52,11 @@ function Chapters() {
         <>
             <Paper
                 component="form"
-                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', mb: '12px' }}
+                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', mb: '12px', width: '30%' }}
             >
                 <InputBase
                     sx={{ ml: 1, flex: 1 }}
-                    placeholder="Search Sponsor"
+                    placeholder="Search Chapters"
                     inputProps={{ 'aria-label': 'search sponsor' }}
                 />
                 <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
