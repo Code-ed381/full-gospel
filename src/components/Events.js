@@ -43,7 +43,7 @@ const Events = ()=> {
     const [speaker, setSpeaker] = useState('');
     const [chapter, setChapter] = useState('');
     const [comment, setComment] = useState('');
-    const [bio, setBio] = useState('');
+    const [bio, setBio] = useState(''); 
     const [category, setCategory] = useState('');
     const [date, setDate] = useState(new Date())
     const [date_to, setDate_to] = useState(new Date())
@@ -189,6 +189,7 @@ const Events = ()=> {
       
     //     filterData();
     //   }, [data, search]);
+    
 
     const handleFlyerUpload = async ()=> {
         const { error } = await supabase
