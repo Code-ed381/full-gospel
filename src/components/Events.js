@@ -230,7 +230,7 @@ const Events = ()=> {
                 date_to: date_to,
                 time: time,
                 time_to: time_to,
-                chapter: chapter,
+                venue: chapter,
                 speaker: speaker,
                 host: host,
                 speaker_bio: bio,
@@ -335,10 +335,10 @@ const Events = ()=> {
                                 />
                                 <CardContent>
                                 <Typography gutterBottom variant="h5" component="div">
-                                    {data.host}
+                                    {data.name} 
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    {data?.name}
+                                    {data?.description}
                                 </Typography>
                                 </CardContent>
                             </CardActionArea>

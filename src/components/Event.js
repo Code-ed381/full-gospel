@@ -23,6 +23,7 @@ const Event = ()=> {
     const [host, setHost] = useState('');
     const [speaker, setSpeaker] = useState('');
     const [chapter, setChapter] = useState('');
+    const [venue, setVenue] = useState('');
     const [comment, setComment] = useState('');
     const [bio, setBio] = useState(''); 
     const [category, setCategory] = useState('');
@@ -48,6 +49,7 @@ const Event = ()=> {
 
             setName(events[0].name)
             setChapter(events[0].chapter)
+            setVenue(events[0].venue)
             setComment(events[0].description)
             setHost(events[0].host)
             setPhone(events[0].phone_number)
@@ -58,7 +60,6 @@ const Event = ()=> {
             setTime(events[0].time)
             setDate_to(events[0].date_to)
             setTime_to(events[0].time_to)
-            console.log(events[0].name)
         }
 
         const getProfile = async () => {
@@ -92,6 +93,7 @@ const Event = ()=> {
 
         setName(events[0].name)
         setChapter(events[0].chapter)
+        setVenue(events[0].venue)
         setComment(events[0].description)
         setHost(events[0].host)
         setPhone(events[0].phone_number)
@@ -102,7 +104,6 @@ const Event = ()=> {
         setTime(events[0].time)
         setDate_to(events[0].date_to)
         setTime_to(events[0].time_to)
-        console.log(events[0].name)
     }
 
     function formattedDate(date) {
@@ -125,12 +126,13 @@ const Event = ()=> {
                 categories_id: category,
                 name: name, 
                 description: comment,
+                chapter: chapter,
+                venue: venue,
                 phone_number: phone,
                 date: date,
                 date_to: date_to,
                 time: time,
                 time_to: time_to,
-                chapter: chapter,
                 speaker: speaker,
                 host: host,
                 speaker_bio: bio
@@ -236,7 +238,7 @@ const Event = ()=> {
                                 <li class="list-group-item d-flex justify-content-between align-items-start">
                                     <div class="ms-2 me-auto">
                                     <div class="fw-bold">Venue</div>
-                                        {data?.chapter}
+                                        {data?.venue}
                                     </div>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-start">
@@ -330,6 +332,17 @@ const Event = ()=> {
                                     </div>
                                     <div className="form-floating mb-3">
                                         <input 
+                                            type="text" 
+                                            className="form-control" 
+                                            id="floatingInput" 
+                                            defaultValue={venue}
+                                            onChange={(e)=> setVenue(e.target.value)}
+                                            placeholder="name@example.com" 
+                                        />
+                                        <label for="floatingInput">Venue</label>
+                                    </div>
+                                    <div className="form-floating mb-3">
+                                        <input 
                                             type="email" 
                                             className="form-control" 
                                             id="floatingInput" 
@@ -337,7 +350,7 @@ const Event = ()=> {
                                             onChange={(e)=> setChapter(e.target.value)}
                                             placeholder="name@example.com" 
                                         />
-                                        <label for="floatingInput">Venue</label>
+                                        <label for="floatingInput">Chapter</label>
                                     </div>
                                     <div className="form-floating mb-3">
                                         <input 
