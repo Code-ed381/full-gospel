@@ -3,8 +3,8 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+// import FormControlLabel from '@mui/material/FormControlLabel';
+// import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -49,26 +49,23 @@ export default function SignInSide() {
   const { setAuth } = useAuth();
   const navigate = useNavigate();
 
-  let isMounted = false
     
   useEffect(() => {
-      const controller = new AbortController();
+    const controller = new AbortController();
+    var isMounted = true
 
-      if(!isMounted) {
-          isMounted = true
-          const getGallery = async ()=> {
-              const results = await supabase
-              .from('gallery')
-              .select(`*`)
-              setGallery(results.data)
-              console.log(results.data)
-          }
-          getGallery();
-      }
+    const getGallery = async ()=> {
+      const results = await supabase
+      .from('gallery')
+      .select(`*`)
+      isMounted && setGallery(results.data)
+    }
+    getGallery();
 
-      return ()=> {
-          controller.abort();
-      }
+    return ()=> {
+      isMounted = false
+      controller.abort();
+    }
       
   }, [])
 

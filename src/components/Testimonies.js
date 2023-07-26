@@ -58,7 +58,7 @@ const Testimonies = ()=> {
         setImg(files)
         const fileNames = Array.from(files).map((file) => file.name);
         setImgName(fileNames);
-      };
+    };
 
     const handleNext = () => {
         let newSkipped = skipped;

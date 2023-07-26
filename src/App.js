@@ -19,11 +19,11 @@ import Landing from "./components/Landing";
 import RequireAuth from './components/RequireAuth';
 // import Redirect from './components/Redirect';
 
-const ROLES = {
-  'User': 'user',
-  'Editor': 'editor',
-  'Admin': 'admin'
-}
+// const ROLES = {
+//   'User': 'user',
+//   'Editor': 'editor',
+//   'Admin': 'admin'
+// }
 
 const App = createHashRouter([
   {
@@ -35,7 +35,7 @@ const App = createHashRouter([
     path:'register',
     element: <SignUp/>
   },
-  {
+  { 
     element: <RequireAuth/>,
     children: [
       {

@@ -40,9 +40,7 @@ const Gallery = ()=> {
     const [errMsg, setErrMsg] = useState('')
 
     const { auth } = useAuth()
-    const navigate = useNavigate()
 
-    console.log(auth)
 
     const getImages = async ()=> {
         const results = await supabase
@@ -100,33 +98,105 @@ const Gallery = ()=> {
         }
     }, [])
 
-    const handleFlyerUpload = async (e)=> {
-        e.preventDefault()
-        console.log(imgName)
+    const getImagesPublicUrls = async (paths) => {
+        const promises = paths.map((path) =>
+          supabase.storage.from('images').getPublicUrl(path)
+        );
+      
+        try {
+            const results = await Promise.all(promises);
+            
+            for (const values of results) {
+                const { data, error } = await supabase
+                  .from('gallery')
+                  .insert([
+                    {
+                        description: comment,
+                        posterUrl: values.data.publicUrl
+                    }
+                  ]);
+            
+                if (error) {
+                  // Handle error
+                  console.error(error);
+                  swal("Failed!", "Image could not be added", "error", {
+                    button: "Ok!",
+                    timer: 3000,
+                });
+                }
+                else {
+                    swal("Success!", "Testimony has been added", "success", {
+                        button: "Done",
+                        timer: 3000,
+                    });
+                    getImages()
+                }
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+    };
 
-        const { error } = await supabase
+    const handleFileChange = (event) => {
+        const files = event.target.files;
+        setImg(files)
+        const fileNames = Array.from(files).map((file) => file.name);
+        setImgName(fileNames);
+    };
+
+    const handleFlyerUpload = async ()=> {
+        const files = Array.from(img).map((file)=> supabase
           .storage
           .from('images')
-          .upload(imgName, img, {
+          .upload(`${file.name}`, file, {
             cacheControl: '3600',
             upsert: false
-        })
+        }))
 
-        if(error) {
-            console.log(error)
-            setErrMsg('Error!! Flyer Failed to upload')
+        try {
+            const responses = await Promise.all(files);
+            console.log(responses)
         }
-        else {
-            const { data } = supabase
-            .storage
-            .from('images')
-            .getPublicUrl(imgName)
-    
-            setImgURL(data.publicUrl)
-            console.log(data.publicUrl)
-            handleSubmitEvent(data?.publicUrl)
+        catch (error) {
+            // Handle error
+            console.log(error)
+        }
+
+        try {
+            getImagesPublicUrls(imgName)
+        }
+        catch(error) {
+            console.log(error)
         }
     }
+
+    // const handleFlyerUpload = async (e)=> {
+    //     e.preventDefault()
+
+    //     const { error } = await supabase
+    //       .storage
+    //       .from('images')
+    //       .upload(imgName, img, {
+    //         cacheControl: '3600',
+    //         upsert: false
+    //     })
+
+    //     if(error) {
+    //         console.log(error)
+    //         setErrMsg('Error!! Flyer Failed to upload')
+    //     }
+    //     else {
+    //         const { data } = supabase
+    //         .storage
+    //         .from('images')
+    //         .getPublicUrl(imgName)
+    
+    //         setImgURL(data.publicUrl)
+    //         console.log(data.publicUrl)
+    //         handleSubmitEvent(data?.publicUrl)
+    //     }
+    // }
 
     const handleSubmitEvent = async (image) => {
       try {
@@ -172,7 +242,7 @@ const Gallery = ()=> {
                 const { data, error } = await supabase
                 .from('gallery')
                 .delete()
-                .eq('id', event)
+                .eq('posterUrl', event)
 
                 if(error){
                     swal("Delete image failed!", {
@@ -183,6 +253,21 @@ const Gallery = ()=> {
                     swal("Image has been deleted!", {
                         icon: "success",
                     });
+
+                    const publicId = event.split('/').pop();
+
+                    const { data, error } = await supabase
+                    .storage
+                    .from('images')
+                    .remove([publicId]);
+
+                    if (error) {
+                      console.error('Error deleting file:', error.message);
+                    } else {
+                      console.log('File deleted successfully.');
+                      console.log(publicId);
+                      console.log(data);
+                    }
 
                     getImages()
                 }
@@ -278,7 +363,7 @@ const Gallery = ()=> {
                                             size="small" 
                                             color="error"
                                             variant='contained' 
-                                            onClick={()=> handleDelete(item?.id)}
+                                            onClick={()=> handleDelete(item?.posterUrl)}
                                             endIcon={<DeleteIcon />}
                                         >
                                             Delete
@@ -310,7 +395,8 @@ const Gallery = ()=> {
                                     class="form-control" 
                                     type="file" 
                                     id="formFile" 
-                                    onChange={(e)=> {setImg(e.target.files[0]); setImgName(e.target.files[0].name)}}
+                                    onChange={handleFileChange}
+                                    multiple
                                 />
                                 <div class="form-floating mt-4">
                                     <textarea 
