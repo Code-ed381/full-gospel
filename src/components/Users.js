@@ -10,6 +10,8 @@ import IconButton from '@mui/material/IconButton';
 import swal from 'sweetalert';
 import SearchIcon from '@mui/icons-material/Search';
 import DirectionsIcon from '@mui/icons-material/Directions';
+import DeleteIcon from '@mui/icons-material/Delete';
+import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 
 const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
 const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmZnZqdXR3eGtzenV2bnNxYXljIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjIwMTMxMDUsImV4cCI6MTk3NzU4OTEwNX0.JryH2jtpXFt-dwHAEdMVH0ykYB3cRfHXS0DKiGM1Z8c'
@@ -41,7 +43,6 @@ function Users() {
                 const results = await supabase
                 .from('profile')
                 .select(`*`)
-                .order('id', { ascending: false})
                 setData(results.data)
             }
             getUsers()
@@ -128,37 +129,48 @@ function Users() {
                 </IconButton>
                 <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
             </Paper>
-            <table class="table">
+            <table class="table table-striped table-hover table-sm">
                 <thead>
                     <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col">Avatar</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Chapter</th>
+                    <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                    </tr>
-                    <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                    </tr>
-                    <tr>
-                    <th scope="row">3</th>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
-                    </tr>
+                    {filteredData?.map((data)=> 
+                        <tr>
+                        <th scope="row">
+                            <Avatar
+                                alt="Remy Sharp"
+                                src={data?.avatar_url}
+                                sx={{ width: 56, height: 56 }}
+                            />
+                        </th>
+                        <td>{data?.full_name}</td>
+                        <td>{data?.email}</td>
+                        <td>{data?.phone}</td>
+                        <td>{data?.chapter}</td>
+                        <td>
+                        <Button 
+                            size="small"
+                            startIcon={<DoDisturbIcon />}
+                        >Deactivate</Button>
+
+                        <Button 
+                            size="small"
+                            color="error"
+                            startIcon={<DeleteIcon />}
+                        >Delete</Button></td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
             
-            <Grid container spacing={2}>
+            {/* <Grid container spacing={2}>
                 {filteredData ? 
                     <>
                         {filteredData?.map((data)=>
@@ -236,7 +248,7 @@ function Users() {
                 ) : (
                     <h4>No Users Found</h4>
                 )}
-            </Grid>
+            </Grid> */}
         </>
     );
   }

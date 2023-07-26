@@ -23,7 +23,6 @@ import Divider from '@mui/material/Divider';
 import SearchIcon from '@mui/icons-material/Search';
 import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import {CardActionArea} from '@mui/material';
 
@@ -98,11 +97,9 @@ const Events = ()=> {
     };
     
     const handleReset = () => {
-    setActiveStep(0);
+        setActiveStep(0);
     };
 
-
-    const navigate = useNavigate();
     const { auth } = useAuth()
 
     const getEvents = async ()=> {
@@ -170,26 +167,7 @@ const Events = ()=> {
         };
       
         filterData();
-    }, [data, search]);
-      
-
-    // useEffect(() => {
-    //     const filterData = () => {
-    //       if (search === '') {
-    //         setFilteredData(data); // If no input, use the main array
-    //       } else {
-    //         const filteredArray = data.filter((item) => {
-    //           // Implement your filter logic here
-    //           // For example, check if the item's name includes the search term
-    //           return item.name.toLowerCase().includes(search.toLowerCase());
-    //         });
-    //         setFilteredData(filteredArray);
-    //       }
-    //     };
-      
-    //     filterData();
-    //   }, [data, search]);
-    
+    }, [data, search]); 
 
     const handleFlyerUpload = async ()=> {
         const { error } = await supabase
@@ -343,20 +321,9 @@ const Events = ()=> {
                                 </CardContent>
                             </CardActionArea>
                             <CardActions>
-                                {/* <Button 
-                                    size="small" 
-                                    color="primary"
-                                    variant="outlined" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#exampleModal"
-                                    startIcon={<TelegramIcon />}
-                                >
-                                Share
-                                </Button> */}
                                 <Button 
                                     size="small" 
-                                    color="error"
-                                    variant="contained" 
+                                    color="error" 
                                     onClick={()=> handleDelete(data?.id)}
                                     startIcon={<DeleteIcon />}
                                 >

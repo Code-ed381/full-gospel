@@ -2,7 +2,6 @@ import * as React from 'react';
 import swal from 'sweetalert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Stepper from '@mui/material/Stepper';
@@ -17,9 +16,6 @@ import Divider from '@mui/material/Divider';
 import SearchIcon from '@mui/icons-material/Search';
 import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
-import LinearProgress from '@mui/material/LinearProgress';
 
 const PROJECT_URI = 'https://pffvjutwxkszuvnsqayc.supabase.co'
 const PROJECT_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmZnZqdXR3eGtzenV2bnNxYXljIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjIwMTMxMDUsImV4cCI6MTk3NzU4OTEwNX0.JryH2jtpXFt-dwHAEdMVH0ykYB3cRfHXS0DKiGM1Z8c'
@@ -31,7 +27,6 @@ const steps = ['Testimony', 'Add posters' ];
 const Testimonies = ()=> {
     const [search, setSearch] = useState('');
     const [filteredData, setFilteredData] = useState([]);
-    const [expanded, setExpanded] = React.useState(false);
     const [data, setData] = useState([]);
     const [testimony, setTestimony] = useState('');
     const [testimonySuccess, setTestimonySuccess] = useState('')
@@ -93,12 +88,6 @@ const Testimonies = ()=> {
     const handleReset = () => {
     setActiveStep(0);
     };
-
-
-    const navigate = useNavigate();
-    const { auth } = useAuth()
-
-    console.log(auth)
 
     const getTestimonies = async ()=> {
         const results = await supabase
@@ -251,10 +240,6 @@ const Testimonies = ()=> {
         });
     }
 
-    const handleExpandClick = () => {
-      setExpanded(!expanded);
-    };
-
     const getImagesPublicUrls = async (paths) => {
         const promises = paths.map((path) =>
           supabase.storage.from('images').getPublicUrl(path)
@@ -293,37 +278,15 @@ const Testimonies = ()=> {
 
     return(
         <>
-            {/* <Paper
-                component="form"
-                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', m: '12px 0' }}
-            >
-                <InputBase
-                    sx={{ ml: 1, flex: 1 }}
-                    placeholder="Search Testimony"
-                    inputProps={{ 'aria-label': 'search testimony' }}
-                />
-                <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-                    <SearchIcon />
-                </IconButton>
-                <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-            </Paper>
-
-            <Button 
-                variant="contained" 
-                sx={{ mb: '12px' }}
-                data-bs-toggle="modal" 
-                data-bs-target="#addEventModal"
-            >Add testimony</Button> */}
-
             <div class="d-flex bd-highlight mb-3">
                 <div class="me-auto p-2 bd-highlight">
-                <Button 
-                    variant="contained" 
-                    sx={{ mb: '12px' }}
-                    data-bs-toggle="modal" 
-                    data-bs-target="#addEventModal"
-                >Add testimony
-                </Button>
+                    <Button 
+                        variant="contained" 
+                        sx={{ mb: '12px' }}
+                        data-bs-toggle="modal" 
+                        data-bs-target="#addEventModal"
+                    >Add testimony
+                    </Button>
                 </div>
                 <div class="p-2 bd-highlight">
                     <Paper
@@ -467,7 +430,6 @@ const Testimonies = ()=> {
                                         </> :
                                             (
                                                 <>
-                                                    {/* <Alert severity="info">Upload posters first and click next</Alert> */}
                                                     <h6 className='mt-3'>Upload posters</h6>
                                                     
                                                     <input 
@@ -477,15 +439,6 @@ const Testimonies = ()=> {
                                                         onChange={handleFileChange}
                                                         multiple
                                                     />
-{/*                                                     
-                                                    <div class="mt-3 d-md-flex justify-content-md-end">
-                                                        <button 
-                                                            class="btn btn-primary me-md-2" 
-                                                            type="button" 
-                                                            onClick={handleFlyerUpload}
-                                                            // onClick={()=> console.log(img)}
-                                                        >Upload</button>
-                                                    </div> */}
                                                 </>
                                             )
                                         }

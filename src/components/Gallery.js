@@ -312,7 +312,7 @@ const Gallery = ()=> {
                 {filteredData ? (
                     <>
                         {filteredData?.map((item, i) => (
-                            <div className="col-md-3 col-xs-12" key={i}>
+                            <div className="col-md-3 col-xs-12 my-2" key={i}>
                                 {/* <Card sx={{ maxWidth: 345 }}>
                                     <CardMedia
                                         component="img"
@@ -341,7 +341,7 @@ const Gallery = ()=> {
                                         </Button>
                                     </CardActions>
                                 </Card> */}
-                                <Card sx={{ maxWidth: 345 }}>
+                                <Card sx={{ maxWidth: 345}}>
                                     <CardActionArea onClick={()=> window.location.href = item?.posterUrl}>
                                         <CardMedia
                                         component="img"
@@ -353,16 +353,22 @@ const Gallery = ()=> {
                                         {/* <Typography gutterBottom variant="h5" component="div">
                                             Lizard
                                         </Typography> */}
-                                        <Typography variant="body2" color="text.secondary">
-                                            {item?.description}
-                                        </Typography>
+                                        {item?.description ? (
+                                            <Typography variant="body2" color="text.secondary">
+                                                {item?.description}
+                                            </Typography>
+                                        ) : (
+                                            
+                                            <Typography variant="body2" color="text.secondary">
+                                                No description
+                                            </Typography>
+                                        )}
                                         </CardContent>
                                     </CardActionArea>
                                     <CardActions>
                                     <Button 
                                             size="small" 
                                             color="error"
-                                            variant='contained' 
                                             onClick={()=> handleDelete(item?.posterUrl)}
                                             endIcon={<DeleteIcon />}
                                         >
